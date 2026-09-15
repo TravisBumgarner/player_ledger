@@ -2,12 +2,16 @@ import { randomUUID } from 'node:crypto'
 import {
   ITEM_CATEGORIES,
   ITEM_TYPES,
+  NOTE_KINDS,
+  PROFILE_IMAGE_TYPES,
+  PROFILE_KINDS,
   RARITIES,
   RESET_ON,
+  type RichDoc,
   SPELL_RESET_ON,
 } from '@awesomeness-mgmt/shared'
 import { sql } from 'drizzle-orm'
-import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
+import { blob, index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 
 // Milliseconds, not SQLite's default seconds: two rows created in the same
 // second would otherwise tie in newest-first order.
@@ -191,16 +195,64 @@ export const goals = sqliteTable(
 
 export type GoalRow = typeof goals.$inferSelect
 
+/** One row per character, created on first save. */
+export const characterDevelopment = sqliteTable('character_development', {
+  characterId: text('character_id')
+    .primaryKey()
+    .references(() => characters.id, { onDelete: 'cascade' }),
+  body: text('body', { mode: 'json' }).$type<RichDoc>().notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+})
+
+export type CharacterDevelopmentRow = typeof characterDevelopment.$inferSelect
+
 export const sessionNotes = sqliteTable(
   'session_notes',
   {
     id: id(),
     characterId: characterId(),
+    kind: text('kind', { enum: NOTE_KINDS }).notNull().default('session'),
     date: text('date').notNull(),
-    text: text('text').notNull(),
+    body: text('body', { mode: 'json' }).$type<RichDoc>().notNull().default({ type: 'doc' }),
     createdAt: createdAt(),
   },
-  (table) => [index('session_notes_character_idx').on(table.characterId, table.createdAt)],
+  (table) => [
+    index('session_notes_character_idx').on(table.characterId, table.createdAt),
+    index('session_notes_kind_idx').on(table.characterId, table.kind, table.createdAt),
+  ],
 )
 
 export type SessionNoteRow = typeof sessionNotes.$inferSelect
+
+/**
+ * A character as the owning ledger sees them: an NPC added by hand, or a party
+ * member's description and notes. A party member has no row until something is
+ * written about them, so `subject_character_id` is unique per owner when set.
+ */
+export const characterProfiles = sqliteTable(
+  'character_profiles',
+  {
+    id: id(),
+    characterId: characterId(),
+    kind: text('kind', { enum: PROFILE_KINDS }).notNull(),
+    subjectCharacterId: text('subject_character_id').references(() => characters.id, {
+      onDelete: 'cascade',
+    }),
+    /** NPCs only; a party member's name is read from `characters`. */
+    name: text('name').notNull().default(''),
+    description: text('description').notNull().default(''),
+    notes: text('notes', { mode: 'json' }).$type<RichDoc>().notNull().default({ type: 'doc' }),
+    /** A portrait, already resized by the client. Never selected in lists: it is the one heavy column. */
+    image: blob('image', { mode: 'buffer' }),
+    imageType: text('image_type', { enum: PROFILE_IMAGE_TYPES }),
+    /** Doubles as the image URL's cache-buster. */
+    imageUpdatedAt: integer('image_updated_at', { mode: 'timestamp_ms' }),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    index('character_profiles_character_idx').on(table.characterId, table.createdAt),
+    uniqueIndex('character_profiles_subject_idx').on(table.characterId, table.subjectCharacterId),
+  ],
+)
+
+export type CharacterProfileRow = typeof characterProfiles.$inferSelect

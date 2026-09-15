@@ -8,9 +8,9 @@ export default defineConfig({
     // fails before a test runs. Declaring the env here means CI needs no setup.
     env: {
       NODE_ENV: 'test',
-      PORT: '3024',
+      PORT: '38471',
       DATABASE_PATH: './data/test.sqlite',
-      FRONTEND_URL: 'http://localhost:5177',
+      FRONTEND_URL: 'http://localhost:38472',
     },
     exclude: ['**/node_modules/**', '**/dist/**'],
   },

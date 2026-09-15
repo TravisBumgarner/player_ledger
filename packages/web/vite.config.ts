@@ -16,6 +16,7 @@ export default defineConfig({
           vendor: ['react', 'react-dom', 'react-router-dom'],
           mui: ['@mui/material'],
           query: ['@tanstack/react-query'],
+          editor: ['@tiptap/react', '@tiptap/starter-kit', '@tiptap/extensions'],
         },
       },
     },
@@ -23,13 +24,13 @@ export default defineConfig({
   // Must match tsconfig.json compilerOptions.paths. Set both or neither.
   resolve: { alias: { '@': path.resolve(__dirname, './src') } },
   server: {
-    port: 5177,
+    port: 38472,
     // Keeps the frontend same-origin in development, so CORS only has to be
     // configured for the deployed origin.
     proxy: {
       // Overridable so several checkouts can run side by side.
       '/api': {
-        target: process.env.API_PROXY_TARGET ?? 'http://localhost:3024',
+        target: process.env.API_PROXY_TARGET ?? 'http://localhost:38471',
         changeOrigin: true,
       },
     },

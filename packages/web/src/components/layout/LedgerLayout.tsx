@@ -5,6 +5,7 @@ import Tabs from '@mui/material/Tabs'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import AppShell from '@/components/AppShell'
+import CharacterPanel from '@/components/characters/CharacterPanel'
 import RestToolbar from '@/components/rest/RestToolbar'
 import { LEDGER_TABS } from '@/lib/routes'
 import { LEDGER_CONTENT_WIDTH, SIDEBAR_WIDTH } from '@/styles/styleConsts'
@@ -53,6 +54,8 @@ export default function LedgerLayout() {
         >
           <Outlet />
         </Box>
+
+        <CharacterPanel />
       </Box>
     </AppShell>
   )

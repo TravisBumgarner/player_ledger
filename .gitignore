@@ -1,8 +1,5 @@
 node_modules/
 dist/
-dist-*/
-build/
-out/
 coverage/
 *.tsbuildinfo
 # Vite's dep-optimizer cache, written into packages/web at dev time.
@@ -12,24 +9,18 @@ coverage/
 .env.*
 !.env.example
 
-# Local SQLite database and its WAL side files.
-data/
+# The local SQLite database (DATABASE_PATH) and its WAL side files, wherever they land.
+packages/api/data/
 *.sqlite
 *.sqlite-journal
 *.sqlite-wal
 *.sqlite-shm
-*.db
 
 .DS_Store
 *.log
-npm-debug.log*
 
 .vscode/
 .idea/
-
-# Storybook: the static build output and its debug log.
-storybook-static/
-*storybook.log
 
 # Scratch worktrees the agent tooling creates.
 .claude/worktrees/

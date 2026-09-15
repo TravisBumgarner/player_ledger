@@ -1,16 +1,22 @@
 import type {
   ApiResponse,
+  CharacterDevelopment,
   CreateGoal,
   CreateSessionNote,
   Goal,
+  NoteKind,
   SessionNote,
+  UpdateCharacterDevelopment,
   UpdateGoal,
+  UpdateSessionNote,
 } from '@awesomeness-mgmt/shared'
 import { apiFetch } from './client'
 
 const characterPath = (characterId: string) => `/characters/${encodeURIComponent(characterId)}`
 const goalsPath = (characterId: string) => `${characterPath(characterId)}/goals`
-const notesPath = (characterId: string) => `${characterPath(characterId)}/session-notes`
+const NOTE_PATHS: Record<NoteKind, string> = { session: 'session-notes', brewing: 'brewing-notes' }
+const notesPath = (characterId: string, kind: NoteKind) =>
+  `${characterPath(characterId)}/${NOTE_PATHS[kind]}`
 
 export function getGoals(characterId: string): Promise<ApiResponse<Goal[]>> {
   return apiFetch(goalsPath(characterId))
@@ -38,20 +44,49 @@ export function deleteGoal(
   return apiFetch(`${goalsPath(characterId)}/${encodeURIComponent(goalId)}`, { method: 'DELETE' })
 }
 
-export function getSessionNotes(characterId: string): Promise<ApiResponse<SessionNote[]>> {
-  return apiFetch(notesPath(characterId))
+export function getNotes(characterId: string, kind: NoteKind): Promise<ApiResponse<SessionNote[]>> {
+  return apiFetch(notesPath(characterId, kind))
 }
 
-export function createSessionNote(
+export function createNote(
   characterId: string,
+  kind: NoteKind,
   body: CreateSessionNote,
 ): Promise<ApiResponse<SessionNote>> {
-  return apiFetch(notesPath(characterId), { method: 'POST', body })
+  return apiFetch(notesPath(characterId, kind), { method: 'POST', body })
 }
 
-export function deleteSessionNote(
+export function updateNote(
   characterId: string,
+  kind: NoteKind,
+  noteId: string,
+  body: UpdateSessionNote,
+): Promise<ApiResponse<SessionNote>> {
+  return apiFetch(`${notesPath(characterId, kind)}/${encodeURIComponent(noteId)}`, {
+    method: 'PATCH',
+    body,
+  })
+}
+
+export function deleteNote(
+  characterId: string,
+  kind: NoteKind,
   noteId: string,
 ): Promise<ApiResponse<{ id: string }>> {
-  return apiFetch(`${notesPath(characterId)}/${encodeURIComponent(noteId)}`, { method: 'DELETE' })
+  return apiFetch(`${notesPath(characterId, kind)}/${encodeURIComponent(noteId)}`, {
+    method: 'DELETE',
+  })
+}
+
+export function getCharacterDevelopment(
+  characterId: string,
+): Promise<ApiResponse<CharacterDevelopment>> {
+  return apiFetch(`${characterPath(characterId)}/development`)
+}
+
+export function saveCharacterDevelopment(
+  characterId: string,
+  body: UpdateCharacterDevelopment,
+): Promise<ApiResponse<CharacterDevelopment>> {
+  return apiFetch(`${characterPath(characterId)}/development`, { method: 'PUT', body })
 }

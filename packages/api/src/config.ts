@@ -8,10 +8,10 @@ import { z } from 'zod'
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
 const envSchema = z.object({
-  PORT: z.string().regex(/^\d+$/, 'must be a whole number').default('3024'),
+  PORT: z.string().regex(/^\d+$/, 'must be a whole number').default('38471'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   DATABASE_PATH: z.string().min(1).default('./data/app.sqlite'),
-  FRONTEND_URL: z.string().min(1).default('http://localhost:5177'),
+  FRONTEND_URL: z.string().min(1).default('http://localhost:38472'),
 })
 
 // Listed explicitly: bundlers replace `process.env.FOO` statically, so the whole

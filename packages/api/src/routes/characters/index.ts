@@ -3,6 +3,7 @@ import { standardRateLimit } from '../../middleware/rateLimit.js'
 import brewingRouter from './brewing.js'
 import inventoryRouter from './inventory.js'
 import journalRouter from './journal.js'
+import profilesRouter from './profiles.js'
 import restRouter from './rest.js'
 import { requireCharacter } from './scope.js'
 import spellsRouter from './spells.js'
@@ -17,6 +18,7 @@ router.use('/rest', restRouter)
 router.use('/spells', spellsRouter)
 router.use('/inventory', inventoryRouter)
 router.use('/brewing', brewingRouter)
+router.use('/profiles', profilesRouter)
 router.use('/', journalRouter)
 
 export default router
