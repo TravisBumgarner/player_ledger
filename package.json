@@ -23,7 +23,7 @@
     "db:migrate": "npm run db:migrate -w @awesomeness-mgmt/api",
     "db:studio": "npm run db:studio -w @awesomeness-mgmt/api",
     "dev:wait-shared": "wait-on packages/shared/dist/index.js",
-    "dev:wait-api": "wait-on http://localhost:3024/api/health",
+    "dev:wait-api": "wait-on http://localhost:38471/api/health",
     "dev": "concurrently -n shared,api,web -c gray,blue,green \"npm run dev -w @awesomeness-mgmt/shared\" \"npm run dev:wait-shared && npm run db:migrate && npm run dev -w @awesomeness-mgmt/api\" \"npm run dev:wait-api && npm run dev -w @awesomeness-mgmt/web\"",
     "prepare": "husky"
   },

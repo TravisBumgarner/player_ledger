@@ -5,9 +5,11 @@ import IngredientsCard from '@/components/brewing/IngredientsCard'
 import LevelCard from '@/components/brewing/LevelCard'
 import RecipesCard from '@/components/brewing/RecipesCard'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
+import NotesCard from '@/components/journal/NotesCard'
 import { useBrewingState, useIngredients, useRecipes } from '@/hooks/queries/useBrewing'
 import LoadFailure from '@/sharedComponents/LoadFailure'
 import Loading from '@/sharedComponents/Loading'
+import SectionLabel from '@/sharedComponents/SectionLabel'
 
 export default function Brewing() {
   const { character } = useActiveCharacter()
@@ -52,6 +54,11 @@ export default function Brewing() {
       >
         <RecipesCard characterId={character.id} recipes={recipes.data} />
         <IngredientsCard characterId={character.id} ingredients={ingredients.data} />
+      </Box>
+
+      <Box component="section" sx={{ display: 'grid', gap: '10px' }}>
+        <SectionLabel>Notes</SectionLabel>
+        <NotesCard kind="brewing" />
       </Box>
     </Box>
   )

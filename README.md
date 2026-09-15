@@ -24,8 +24,8 @@ npm run dev                                       # shared + api (after migratin
 
 | Service | Port |
 | --- | --- |
-| api | 3024 (`/api/health`) |
-| web | 5177 |
+| api | 38471 (`/api/health`) |
+| web | 38472 |
 
 The database is a file at `packages/api/data/app.sqlite` (`DATABASE_PATH`),
 created on first run.

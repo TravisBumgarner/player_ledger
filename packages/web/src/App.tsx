@@ -10,6 +10,7 @@ import LedgerLayout from '@/components/layout/LedgerLayout'
 import { useHealthCheck } from '@/hooks/useHealthCheck'
 import { ROUTES } from '@/lib/routes'
 import Brewing from '@/pages/Brewing'
+import Characters from '@/pages/Characters'
 import Inventory from '@/pages/Inventory'
 import NotFound from '@/pages/NotFound'
 import Overview from '@/pages/Overview'
@@ -73,6 +74,7 @@ function AppRoutes() {
           <Route path={ROUTES.spells} element={<Spells />} />
           <Route path={ROUTES.inventory} element={<Inventory />} />
           <Route path={ROUTES.brewing} element={<Brewing />} />
+          <Route path={ROUTES.characters} element={<Characters />} />
           <Route path={ROUTES.sessionNotes} element={<SessionNotes />} />
         </Route>
         {/* A dead address says so rather than bouncing home, which reads as the

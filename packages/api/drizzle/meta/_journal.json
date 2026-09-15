@@ -29,6 +29,48 @@
       "when": 1789428138229,
       "tag": "0003_ledger",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1789433884709,
+      "tag": "0004_session_note_body",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1789433918925,
+      "tag": "0005_drop_session_note_text",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1789437300880,
+      "tag": "0006_character_profiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1789438122083,
+      "tag": "0007_profile_images",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1789438630020,
+      "tag": "0008_character_development",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1789439012675,
+      "tag": "0009_note_kinds",
+      "breakpoints": true
     }
   ]
 }

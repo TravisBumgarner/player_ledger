@@ -1,0 +1,1 @@
+ALTER TABLE `session_notes` DROP COLUMN `text`;

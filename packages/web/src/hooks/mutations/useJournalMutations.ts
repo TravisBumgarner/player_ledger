@@ -1,11 +1,22 @@
-import type { CreateGoal, CreateSessionNote, Goal, SessionNote } from '@awesomeness-mgmt/shared'
+import type {
+  CharacterDevelopment,
+  CreateGoal,
+  CreateSessionNote,
+  Goal,
+  NoteKind,
+  RichDoc,
+  SessionNote,
+  UpdateSessionNote,
+} from '@awesomeness-mgmt/shared'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   createGoal,
-  createSessionNote,
+  createNote,
   deleteGoal,
-  deleteSessionNote,
+  deleteNote,
+  saveCharacterDevelopment,
   updateGoal,
+  updateNote,
 } from '@/api/journal'
 import { ApiError } from '@/lib/ApiError'
 import { queryKeys } from '@/lib/queryKeys'
@@ -73,37 +84,80 @@ export function useDeleteGoal(characterId: string) {
   })
 }
 
-export function useCreateSessionNote(characterId: string) {
+export function useCreateNote(characterId: string, kind: NoteKind) {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationKey: ['createSessionNote', characterId],
+    mutationKey: ['createNote', characterId, kind],
     mutationFn: async (input: CreateSessionNote) => {
-      const response = await createSessionNote(characterId, input)
+      const response = await createNote(characterId, kind, input)
       if (!response.success) throw new ApiError(response.errorCode)
       return response.data
     },
     onSuccess: (note) => {
-      queryClient.setQueryData<SessionNote[]>(queryKeys.sessionNotes(characterId), (rows) =>
+      queryClient.setQueryData<SessionNote[]>(queryKeys.notes(characterId, kind), (rows) =>
         rows ? [note, ...rows] : rows,
       )
-      void queryClient.invalidateQueries({ queryKey: queryKeys.sessionNotes(characterId) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.notes(characterId, kind) })
+      // Mentions live in note bodies, so backlinks move with them.
+      void queryClient.invalidateQueries({ queryKey: queryKeys.profiles(characterId) })
     },
   })
 }
 
-export function useDeleteSessionNote(characterId: string) {
+export function useUpdateNote(characterId: string, kind: NoteKind) {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationKey: ['deleteSessionNote', characterId],
+    mutationKey: ['updateNote', characterId, kind],
+    mutationFn: async ({ noteId, input }: { noteId: string; input: UpdateSessionNote }) => {
+      const response = await updateNote(characterId, kind, noteId, input)
+      if (!response.success) throw new ApiError(response.errorCode)
+      return response.data
+    },
+    onSuccess: (note) => {
+      queryClient.setQueryData<SessionNote[]>(queryKeys.notes(characterId, kind), (rows) =>
+        rows?.map((row) => (row.id === note.id ? note : row)),
+      )
+      void queryClient.invalidateQueries({ queryKey: queryKeys.profiles(characterId) })
+    },
+  })
+}
+
+export function useDeleteNote(characterId: string, kind: NoteKind) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationKey: ['deleteNote', characterId, kind],
     mutationFn: async (noteId: string) => {
-      const response = await deleteSessionNote(characterId, noteId)
+      const response = await deleteNote(characterId, kind, noteId)
       if (!response.success) throw new ApiError(response.errorCode)
       return response.data
     },
     onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: queryKeys.sessionNotes(characterId) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.notes(characterId, kind) })
+      // Mentions live in note bodies, so backlinks move with them.
+      void queryClient.invalidateQueries({ queryKey: queryKeys.profiles(characterId) })
+    },
+  })
+}
+
+export function useSaveCharacterDevelopment(characterId: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationKey: ['saveCharacterDevelopment', characterId],
+    mutationFn: async (body: RichDoc) => {
+      const response = await saveCharacterDevelopment(characterId, { body })
+      if (!response.success) throw new ApiError(response.errorCode)
+      return response.data
+    },
+    onSuccess: (development) => {
+      queryClient.setQueryData<CharacterDevelopment>(
+        queryKeys.development(characterId),
+        development,
+      )
+      void queryClient.invalidateQueries({ queryKey: queryKeys.profiles(characterId) })
     },
   })
 }

@@ -4,6 +4,7 @@ export const ROUTES = {
   spells: '/spells',
   inventory: '/inventory',
   brewing: '/brewing',
+  characters: '/characters',
   sessionNotes: '/session-notes',
 } as const
 
@@ -13,6 +14,7 @@ export const LEDGER_TABS = [
   { path: ROUTES.spells, label: 'Custom Spells' },
   { path: ROUTES.inventory, label: 'Inventory' },
   { path: ROUTES.brewing, label: 'Potion Brewing' },
+  { path: ROUTES.characters, label: 'Characters' },
   { path: ROUTES.sessionNotes, label: 'Session Notes' },
 ] as const
 
