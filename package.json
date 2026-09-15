@@ -1,0 +1,52 @@
+{
+  "name": "awesomeness-mgmt",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "bootstrap": "bash scripts/bootstrap.sh",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "db:generate": "npm run db:generate -w @awesomeness-mgmt/api",
+    "db:migrate": "npm run db:migrate -w @awesomeness-mgmt/api",
+    "db:studio": "npm run db:studio -w @awesomeness-mgmt/api",
+    "dev:wait-shared": "wait-on packages/shared/dist/index.js",
+    "dev:wait-api": "wait-on http://localhost:3024/api/health",
+    "dev": "concurrently -n shared,api,web -c gray,blue,green \"npm run dev -w @awesomeness-mgmt/shared\" \"npm run dev:wait-shared && npm run db:migrate && npm run dev -w @awesomeness-mgmt/api\" \"npm run dev:wait-api && npm run dev -w @awesomeness-mgmt/web\"",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,json}": "biome check --write --no-errors-on-unmatched"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.11",
+    "concurrently": "^9.1.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5",
+    "wait-on": "^8.0.2"
+  },
+  "allowScripts": {
+    "better-sqlite3@12.11.1": true,
+    "esbuild@0.18.20": true,
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.2": true,
+    "@swc/core@1.16.1": true,
+    "fsevents@2.3.3": true,
+    "fsevents@2.3.2": true
+  }
+}
