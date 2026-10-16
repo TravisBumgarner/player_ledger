@@ -67,8 +67,7 @@ function PickUser({ users }: { users: User[] }) {
   return (
     <IdentityPicker
       heading="Who are you?"
-      fieldLabel="Your name"
-      existingLabel="Or pick yourself"
+      fieldLabel="Add your name"
       existing={users}
       selectedId={userId}
       onPick={setUserId}
@@ -90,8 +89,7 @@ function PickCharacter({ user, characters }: { user: User; characters: Character
       // Keyed by user, so a half-typed name does not carry over to someone else.
       key={user.id}
       heading={`Who are you playing, ${user.name}?`}
-      fieldLabel="Character name"
-      existingLabel="Or pick a character"
+      fieldLabel="Add a character"
       existing={characters}
       selectedId={characterId}
       onPick={setCharacterId}
@@ -99,7 +97,7 @@ function PickCharacter({ user, characters }: { user: User; characters: Character
       isCreating={createCharacter.isPending}
       createError={createCharacter.error}
       footer={
-        <Button variant="quiet" onClick={() => setUserId(null)} sx={{ justifySelf: 'start' }}>
+        <Button variant="text" onClick={() => setUserId(null)} sx={{ justifySelf: 'start' }}>
           {`Not ${user.name}? Change user`}
         </Button>
       }

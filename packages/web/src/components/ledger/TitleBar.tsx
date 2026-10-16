@@ -32,7 +32,7 @@ export default function TitleBar({ actions }: { actions?: ReactNode }) {
       }}
     >
       <Typography variant="capsSm" sx={{ color: 'ledger.muted' }}>
-        {character ? `${character.name}'s Ledger` : 'Ledger'}
+        {character ? `${character.name}'s Ledger` : 'Player Ledger'}
       </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         {actions}

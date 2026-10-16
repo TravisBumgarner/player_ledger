@@ -2,7 +2,7 @@
   "name": "@awesomeness-mgmt/desktop",
   "version": "0.1.0",
   "private": true,
-  "productName": "Awesomeness Mgmt",
+  "productName": "Player Ledger",
   "type": "module",
   "main": "dist/main.js",
   "scripts": {

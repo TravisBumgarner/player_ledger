@@ -1,5 +1,5 @@
-appId: com.travisbumgarner.awesomeness-mgmt
-productName: Awesomeness Mgmt
+appId: com.travisbumgarner.player-ledger
+productName: Player Ledger
 directories:
   output: release
   buildResources: build

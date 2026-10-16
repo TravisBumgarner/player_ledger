@@ -1,3 +1,4 @@
+import { cpSync, existsSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { BrowserWindow, dialog, app as electronApp, Menu, shell } from 'electron'
@@ -5,10 +6,16 @@ import { BrowserWindow, dialog, app as electronApp, Menu, shell } from 'electron
 const here = dirname(fileURLToPath(import.meta.url))
 const databasePath = join(electronApp.getPath('userData'), 'app.sqlite')
 
+// The app was "Awesomeness Mgmt", and userData follows the product name; bring its data along once.
+const legacyData = join(electronApp.getPath('appData'), 'Awesomeness Mgmt')
+if (!existsSync(databasePath) && existsSync(join(legacyData, 'app.sqlite'))) {
+  cpSync(legacyData, electronApp.getPath('userData'), { recursive: true })
+}
+
 // No top-level await: Electron holds `ready` until an ESM entry finishes evaluating, so awaiting
 // whenReady at the top level deadlocks with the dock icon bouncing forever.
 async function start() {
-  // `npm run dev:desktop` runs the API and Vite separately, for watch and hot reload, and points here.
+  // `npm run dev` runs the API and Vite separately, for watch and hot reload, and points here.
   const devUrl = process.env.ELECTRON_DEV_URL
   const { origin, close } = devUrl ? { origin: devUrl, close: () => {} } : await startApi()
 
@@ -83,6 +90,6 @@ async function startApi() {
 electronApp.on('window-all-closed', () => electronApp.quit())
 
 start().catch((error: unknown) => {
-  dialog.showErrorBox('Awesomeness Mgmt failed to start', String(error))
+  dialog.showErrorBox('Player Ledger failed to start', String(error))
   electronApp.exit(1)
 })
