@@ -33,6 +33,7 @@ export type RichTextEditorProps = {
 }
 
 // ProseMirror builds this DOM, so there is no MUI slot to hang a `components.*` default on.
+// Lengths are px strings: inside sx a bare number for margin or padding is theme spacing (×4).
 const contentStyles = (theme: Theme) => {
   const { text, muted, line, line2, panel, mention, accent } = theme.palette.ledger
   return {
@@ -47,13 +48,13 @@ const contentStyles = (theme: Theme) => {
       '& h2': { ...theme.typography.h3, margin: 0 },
       '& h3': { ...theme.typography.h4, margin: 0 },
       '& p': { margin: 0 },
-      '& > * + *': { marginTop: 6 },
-      '& > * + h1, & > * + h2, & > * + h3': { marginTop: 12 },
+      '& > * + *': { marginTop: '6px' },
+      '& > * + h1, & > * + h2, & > * + h3': { marginTop: '12px' },
       '& ul, & ol': { margin: 0, paddingLeft: '1.25em' },
       '& li > p': { margin: 0 },
       '& blockquote': {
         margin: 0,
-        paddingLeft: 12,
+        paddingLeft: '12px',
         borderLeft: `2px solid ${accent}`,
         color: muted,
         fontStyle: 'italic',

@@ -13,6 +13,8 @@ const Diamond = styled('span', {
   flex: 'none',
   boxSizing: 'border-box',
   transform: 'rotate(45deg)',
+  // Rotated, the corners reach ~21% past the box; the margin keeps a clipping parent from cutting them.
+  margin: `${Math.ceil(size * 0.21)}px`,
   ...(filled
     ? { backgroundColor: theme.palette.ledger.accent }
     : { border: `1px solid ${theme.palette.ledger.line2}` }),

@@ -15,7 +15,6 @@ export function toSpell(row: SpellRow): Spell {
     slotsTotal: row.slotsTotal,
     slotsUsed: row.slotsUsed,
     resetOn: row.resetOn,
-    pinned: row.pinned,
     createdAt: row.createdAt.toISOString(),
   }
 }

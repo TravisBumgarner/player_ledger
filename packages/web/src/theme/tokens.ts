@@ -90,7 +90,7 @@ export const LAYOUT = {
   navRowHeight: 40,
   contentMaxWidth: 820,
   cardPadding: 20,
-  rowMinHeight: 52,
+  rowMinHeight: 44,
   statBox: { w: 64, h: 68 },
   iconButton: 36,
   bracketArm: 14,

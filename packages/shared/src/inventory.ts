@@ -29,7 +29,6 @@ export const inventoryItemSchema = z.object({
   type: z.enum(ITEM_TYPES),
   category: z.enum(ITEM_CATEGORIES),
   name: z.string(),
-  pinned: z.boolean(),
   // gear
   used: z.boolean(),
   qtyTag: z.string(),
@@ -60,7 +59,6 @@ export const updateItemSchema = z
   .object({
     category: z.enum(ITEM_CATEGORIES),
     name: nameField,
-    pinned: z.boolean(),
     used: z.boolean(),
     qtyTag: z.string().trim().max(120),
     trackedDndBeyond: z.boolean(),

@@ -13,7 +13,6 @@ import {
   useLogItemUse,
   useUpdateItem,
 } from '@/hooks/mutations/useInventoryMutations'
-import PinButton from '@/sharedComponents/PinButton'
 import ItemName from './ItemName'
 import { latestNote, resetLabel } from './itemText'
 import NoteForm from './NoteForm'
@@ -131,12 +130,6 @@ export default function ItemRow({ item, dimmed = false, onEdit }: ItemRowProps) 
               Archive
             </Button>
           )}
-          <PinButton
-            pinned={item.pinned}
-            name={item.name}
-            disabled={update.isPending}
-            onToggle={() => update.mutate({ itemId: item.id, patch: { pinned: !item.pinned } })}
-          />
         </Box>
       </RuledRow>
 

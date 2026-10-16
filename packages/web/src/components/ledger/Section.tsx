@@ -13,6 +13,8 @@ export default function Section({ title, right, children }: SectionProps) {
       <BracketPanel
         component="div"
         sx={{
+          // Rows carry their own height, so the card only needs a little air above and below them.
+          py: 2,
           '& .ledger-row:last-child, & > form:last-child .ledger-row, & .motion-row:last-child > .ledger-row':
             { borderBottom: 'none' },
         }}

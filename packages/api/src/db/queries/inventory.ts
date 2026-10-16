@@ -29,7 +29,6 @@ function toItem(row: InventoryItemRow, notes: InventoryNoteRow[]): InventoryItem
     type: row.type,
     category: row.category,
     name: row.name,
-    pinned: row.pinned,
     used: row.used,
     qtyTag: row.qtyTag,
     trackedDndBeyond: row.trackedDndBeyond,
