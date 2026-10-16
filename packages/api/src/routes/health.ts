@@ -1,4 +1,4 @@
-import type { Health } from '@awesomeness-mgmt/shared'
+import type { Health } from '@player-ledger/shared'
 import { Router } from 'express'
 import { sendSuccess } from './shared/responses.js'
 

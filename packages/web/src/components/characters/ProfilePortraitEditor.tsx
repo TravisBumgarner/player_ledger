@@ -1,8 +1,3 @@
-import {
-  type CharacterProfile,
-  PROFILE_IMAGE_MAX_BYTES,
-  PROFILE_IMAGE_TYPES,
-} from '@awesomeness-mgmt/shared'
 import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
@@ -12,6 +7,11 @@ import IconButton from '@mui/material/IconButton'
 import { alpha, styled } from '@mui/material/styles'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import {
+  type CharacterProfile,
+  PROFILE_IMAGE_MAX_BYTES,
+  PROFILE_IMAGE_TYPES,
+} from '@player-ledger/shared'
 import { type ChangeEvent, useRef, useState } from 'react'
 import type { Area } from 'react-easy-crop'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'

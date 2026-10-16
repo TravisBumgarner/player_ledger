@@ -1,7 +1,7 @@
-import { createUserSchema } from '@awesomeness-mgmt/shared'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import { createUserSchema } from '@player-ledger/shared'
 import type { KeyboardEvent, ReactNode } from 'react'
 import AddRow from '@/components/ledger/AddRow'
 import Diamond from '@/components/ledger/Diamond'

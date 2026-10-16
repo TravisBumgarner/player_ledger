@@ -1,4 +1,4 @@
-import type { CharacterProfile, CreateNpc, UpdateProfile } from '@awesomeness-mgmt/shared'
+import type { CharacterProfile, CreateNpc, UpdateProfile } from '@player-ledger/shared'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   createNpc,

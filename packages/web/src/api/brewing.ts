@@ -10,7 +10,7 @@ import type {
   UpdateBrewingLevel,
   UpdateIngredient,
   UpdateRecipe,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { apiFetch } from './client'
 
 const base = (characterId: string) => `/characters/${encodeURIComponent(characterId)}/brewing`

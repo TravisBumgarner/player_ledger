@@ -1,4 +1,4 @@
-import type { InventoryItem, ItemNote, UpdateItem } from '@awesomeness-mgmt/shared'
+import type { InventoryItem, ItemNote, UpdateItem } from '@player-ledger/shared'
 import { and, asc, desc, eq } from 'drizzle-orm'
 import { db } from '../index.js'
 import {

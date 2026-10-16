@@ -1,7 +1,7 @@
-import { type CharacterProfile, type RichDoc, trimRichDoc } from '@awesomeness-mgmt/shared'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
+import { type CharacterProfile, type RichDoc, trimRichDoc } from '@player-ledger/shared'
 import { useState } from 'react'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
 import EmptyState from '@/components/ledger/EmptyState'

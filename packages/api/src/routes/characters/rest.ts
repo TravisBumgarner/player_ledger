@@ -1,4 +1,4 @@
-import { takeRestSchema } from '@awesomeness-mgmt/shared'
+import { takeRestSchema } from '@player-ledger/shared'
 import { type Request, type Response, Router } from 'express'
 import { getRestState, takeRest, toRestState } from '../../db/queries/rest.js'
 import { sendError, sendSuccess } from '../shared/responses.js'

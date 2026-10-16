@@ -1,5 +1,5 @@
 {
-  "name": "awesomeness-mgmt",
+  "name": "player-ledger",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -19,14 +19,14 @@
     "format": "biome format --write .",
     "check": "biome check .",
     "check:fix": "biome check --write .",
-    "db:generate": "npm run db:generate -w @awesomeness-mgmt/api",
-    "db:migrate": "npm run db:migrate -w @awesomeness-mgmt/api",
-    "db:studio": "npm run db:studio -w @awesomeness-mgmt/api",
+    "db:generate": "npm run db:generate -w @player-ledger/api",
+    "db:migrate": "npm run db:migrate -w @player-ledger/api",
+    "db:studio": "npm run db:studio -w @player-ledger/api",
     "dev:wait-shared": "wait-on packages/shared/dist/index.js",
     "dev:wait-api": "wait-on http://localhost:38471/api/health",
-    "dev": "concurrently -k -n shared,api,web,desktop -c gray,blue,green,magenta \"npm run dev -w @awesomeness-mgmt/shared\" \"npm run dev:wait-shared && npm run db:migrate && npm run dev -w @awesomeness-mgmt/api\" \"npm run dev:wait-api && npm run dev -w @awesomeness-mgmt/web\" \"npm run dev:wait-web && npm run dev -w @awesomeness-mgmt/desktop\"",
+    "dev": "concurrently -k -n shared,api,web,desktop -c gray,blue,green,magenta \"npm run dev -w @player-ledger/shared\" \"npm run dev:wait-shared && npm run db:migrate && npm run dev -w @player-ledger/api\" \"npm run dev:wait-api && npm run dev -w @player-ledger/web\" \"npm run dev:wait-web && npm run dev -w @player-ledger/desktop\"",
     "dev:wait-web": "wait-on http://localhost:38472",
-    "dist:desktop": "npm run dist -w @awesomeness-mgmt/desktop",
+    "dist:desktop": "npm run dist -w @player-ledger/desktop",
     "prepare": "husky"
   },
   "lint-staged": {

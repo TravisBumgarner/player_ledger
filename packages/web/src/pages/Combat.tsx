@@ -1,5 +1,5 @@
-import type { Spell } from '@awesomeness-mgmt/shared'
 import Button from '@mui/material/Button'
+import type { Spell } from '@player-ledger/shared'
 import { useState } from 'react'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
 import EmptyState from '@/components/ledger/EmptyState'

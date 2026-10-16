@@ -6,7 +6,7 @@ import {
   updateBrewingLevelSchema,
   updateIngredientSchema,
   updateRecipeSchema,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { type Request, type Response, Router } from 'express'
 import {
   clearBrew,

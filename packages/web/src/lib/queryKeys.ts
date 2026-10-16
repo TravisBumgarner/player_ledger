@@ -1,4 +1,4 @@
-import type { NoteKind } from '@awesomeness-mgmt/shared'
+import type { NoteKind } from '@player-ledger/shared'
 
 /** Every key in one place, so invalidation cannot drift from subscription. */
 export const queryKeys = {

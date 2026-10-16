@@ -1,4 +1,4 @@
-import { log } from '@awesomeness-mgmt/shared'
+import { log } from '@player-ledger/shared'
 import type { Request } from 'express'
 import rateLimit, { ipKeyGenerator } from 'express-rate-limit'
 

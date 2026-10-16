@@ -1,4 +1,4 @@
-import { type ApiResponse, log } from '@awesomeness-mgmt/shared'
+import { type ApiResponse, log } from '@player-ledger/shared'
 import config from '@/config'
 
 type RequestOptions = {

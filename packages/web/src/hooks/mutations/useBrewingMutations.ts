@@ -9,7 +9,7 @@ import type {
   UpdateBrewingLevel,
   UpdateIngredient,
   UpdateRecipe,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   clearBrew,

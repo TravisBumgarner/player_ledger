@@ -1,4 +1,4 @@
-import type { CreateSpell, Spell, UpdateSpell } from '@awesomeness-mgmt/shared'
+import type { CreateSpell, Spell, UpdateSpell } from '@player-ledger/shared'
 import { and, asc, eq, sql } from 'drizzle-orm'
 import { db } from '../index.js'
 import { type SpellRow, spells } from '../schema.js'

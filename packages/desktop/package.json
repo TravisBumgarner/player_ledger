@@ -1,5 +1,5 @@
 {
-  "name": "@awesomeness-mgmt/desktop",
+  "name": "@player-ledger/desktop",
   "version": "0.1.0",
   "private": true,
   "productName": "Player Ledger",
@@ -8,7 +8,7 @@
   "scripts": {
     "build": "esbuild src/main.ts --bundle --platform=node --format=esm --outfile=dist/main.js --external:electron --external:better-sqlite3 --banner:js=\"import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);\"",
     "start": "npm run build && electron .",
-    "dist": "npm run build -w @awesomeness-mgmt/shared && npm run build -w @awesomeness-mgmt/web && npm run build && electron-rebuild -f -o better-sqlite3 -m . && electron-builder; npm rebuild better-sqlite3",
+    "dist": "npm run build -w @player-ledger/shared && npm run build -w @player-ledger/web && npm run build && electron-rebuild -f -o better-sqlite3 -m . && electron-builder; npm rebuild better-sqlite3",
     "typecheck": "tsc --noEmit",
     "dev": "npm run build && ELECTRON_DEV_URL=http://localhost:38472 electron ."
   },

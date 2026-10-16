@@ -1,5 +1,5 @@
-import { type CharacterProfile, createNpcSchema } from '@awesomeness-mgmt/shared'
 import Typography from '@mui/material/Typography'
+import { type CharacterProfile, createNpcSchema } from '@player-ledger/shared'
 import { profileMeta } from '@/components/characters/CharacterRow'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
 import AddRow from '@/components/ledger/AddRow'

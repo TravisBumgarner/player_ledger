@@ -1,4 +1,4 @@
-import type { CreateSpell, Spell, UpdateSpell } from '@awesomeness-mgmt/shared'
+import type { CreateSpell, Spell, UpdateSpell } from '@player-ledger/shared'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { castSpell, createSpell, deleteSpell, updateSpell } from '@/api/spells'
 import { ApiError } from '@/lib/ApiError'

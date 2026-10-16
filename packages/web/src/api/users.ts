@@ -5,7 +5,7 @@ import type {
   CreateUser,
   RenameCharacter,
   User,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { apiFetch } from './client'
 
 export function getUsers(): Promise<ApiResponse<User[]>> {

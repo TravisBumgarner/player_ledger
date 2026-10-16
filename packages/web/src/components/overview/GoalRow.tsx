@@ -1,9 +1,9 @@
-import type { Goal } from '@awesomeness-mgmt/shared'
 import CloseIcon from '@mui/icons-material/Close'
 import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import type { Goal } from '@player-ledger/shared'
 import RuledRow from '@/components/ledger/RuledRow'
 
 export type GoalRowProps = {

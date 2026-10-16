@@ -1,4 +1,4 @@
-import type { CreateCharacter, CreateUser } from '@awesomeness-mgmt/shared'
+import type { CreateCharacter, CreateUser } from '@player-ledger/shared'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createCharacter, createUser, renameCharacter } from '@/api/users'
 import { ApiError } from '@/lib/ApiError'

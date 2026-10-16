@@ -1,4 +1,4 @@
-import { log } from '@awesomeness-mgmt/shared'
+import { log } from '@player-ledger/shared'
 import app from './app.js'
 import config from './config.js'
 import { sqlite } from './db/index.js'

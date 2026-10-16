@@ -1,5 +1,5 @@
 {
-  "name": "@awesomeness-mgmt/api",
+  "name": "@player-ledger/api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -15,7 +15,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@awesomeness-mgmt/shared": "*",
+    "@player-ledger/shared": "*",
     "better-sqlite3": "^12.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",

@@ -5,7 +5,7 @@ import {
   type ProfileRef,
   parseProfileRef,
   updateProfileSchema,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import express, { type Request, type Response, Router } from 'express'
 import {
   createNpc,

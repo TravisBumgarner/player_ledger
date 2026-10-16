@@ -5,7 +5,7 @@ import type {
   InventoryItem,
   LogItemUse,
   UpdateItem,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { apiFetch } from './client'
 
 const base = (characterId: string) => `/characters/${encodeURIComponent(characterId)}/inventory`

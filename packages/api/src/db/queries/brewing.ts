@@ -9,7 +9,7 @@ import {
   type UpdateBrewingLevel,
   type UpdateIngredient,
   type UpdateRecipe,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { and, asc, eq, isNotNull, sql } from 'drizzle-orm'
 import { db } from '../index.js'
 import {

@@ -1,7 +1,7 @@
-import type { CharacterProfile } from '@awesomeness-mgmt/shared'
 import Box from '@mui/material/Box'
 import InputBase from '@mui/material/InputBase'
 import Typography from '@mui/material/Typography'
+import type { CharacterProfile } from '@player-ledger/shared'
 import { useState } from 'react'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
 import { useUpdateProfile } from '@/hooks/mutations/useProfileMutations'

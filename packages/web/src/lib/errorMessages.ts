@@ -1,4 +1,4 @@
-import type { ErrorCode } from '@awesomeness-mgmt/shared'
+import type { ErrorCode } from '@player-ledger/shared'
 import { ApiError } from '@/lib/ApiError'
 
 /** Codes are the contract; messages are ours. */
