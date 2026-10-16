@@ -1,6 +1,6 @@
-import type { RestKind } from '@awesomeness-mgmt/shared'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import type { RestKind } from '@player-ledger/shared'
 import { useState } from 'react'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
 import { useTakeRest } from '@/hooks/mutations/useRestMutations'

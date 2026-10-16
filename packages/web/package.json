@@ -1,5 +1,5 @@
 {
-  "name": "@awesomeness-mgmt/web",
+  "name": "@player-ledger/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@awesomeness-mgmt/shared": "*",
+    "@player-ledger/shared": "*",
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",

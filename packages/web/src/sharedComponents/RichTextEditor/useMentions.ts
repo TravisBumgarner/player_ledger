@@ -1,4 +1,4 @@
-import { type CharacterProfile, MENTION_NODE } from '@awesomeness-mgmt/shared'
+import { type CharacterProfile, MENTION_NODE } from '@player-ledger/shared'
 import Mention, { type MentionNodeAttrs } from '@tiptap/extension-mention'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
 import type { AnyExtension } from '@tiptap/react'

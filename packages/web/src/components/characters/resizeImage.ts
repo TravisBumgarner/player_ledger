@@ -1,4 +1,4 @@
-import { PROFILE_IMAGE_EDGE } from '@awesomeness-mgmt/shared'
+import { PROFILE_IMAGE_EDGE } from '@player-ledger/shared'
 
 export type CropArea = { x: number; y: number; width: number; height: number }
 

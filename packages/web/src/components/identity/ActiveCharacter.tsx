@@ -1,4 +1,4 @@
-import type { Character, User } from '@awesomeness-mgmt/shared'
+import type { Character, User } from '@player-ledger/shared'
 import { createContext, type ReactNode, useContext } from 'react'
 
 type ActiveCharacter = { user: User; character: Character }

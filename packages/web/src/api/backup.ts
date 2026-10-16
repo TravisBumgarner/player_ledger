@@ -1,4 +1,4 @@
-import type { ApiResponse, Backup, RestoreBackup } from '@awesomeness-mgmt/shared'
+import type { ApiResponse, Backup, RestoreBackup } from '@player-ledger/shared'
 import { apiFetch } from './client'
 
 export function createBackup(): Promise<ApiResponse<{ file: string }>> {

@@ -1,5 +1,5 @@
-import type { Character, User } from '@awesomeness-mgmt/shared'
 import Button from '@mui/material/Button'
+import type { Character, User } from '@player-ledger/shared'
 import type { ReactNode } from 'react'
 import AppShell from '@/components/AppShell'
 import { ActiveCharacterProvider } from '@/components/identity/ActiveCharacter'

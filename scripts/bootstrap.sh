@@ -26,8 +26,8 @@ npm install
 ok "Dependencies installed"
 
 # Nothing else can typecheck until it exists.
-info "Building @awesomeness-mgmt/shared"
-npm run build -w @awesomeness-mgmt/shared
+info "Building @player-ledger/shared"
+npm run build -w @player-ledger/shared
 ok "shared built"
 
 info "Creating .env files"

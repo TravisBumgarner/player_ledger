@@ -1,4 +1,4 @@
-import { createSpellSchema, updateSpellSchema } from '@awesomeness-mgmt/shared'
+import { createSpellSchema, updateSpellSchema } from '@player-ledger/shared'
 import { type Request, type Response, Router } from 'express'
 import {
   castSpell,

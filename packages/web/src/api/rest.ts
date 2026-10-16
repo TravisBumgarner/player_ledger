@@ -1,4 +1,4 @@
-import type { ApiResponse, RestState, TakeRest } from '@awesomeness-mgmt/shared'
+import type { ApiResponse, RestState, TakeRest } from '@player-ledger/shared'
 import { apiFetch } from './client'
 
 const restPath = (characterId: string) => `/characters/${encodeURIComponent(characterId)}/rest`

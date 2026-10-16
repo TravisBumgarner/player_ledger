@@ -1,4 +1,4 @@
-import type { InventoryItem, ItemCategory } from '@awesomeness-mgmt/shared'
+import type { InventoryItem, ItemCategory } from '@player-ledger/shared'
 import DataTable from '@/components/ledger/DataTable'
 import { MotionRow } from '@/components/ledger/motion'
 import Section from '@/components/ledger/Section'

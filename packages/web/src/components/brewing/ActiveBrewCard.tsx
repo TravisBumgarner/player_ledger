@@ -1,10 +1,3 @@
-import {
-  BREW_HOURS_BY_RARITY,
-  BREW_SESSION_HOURS,
-  type BrewingState,
-  type Recipe,
-  startBrewSchema,
-} from '@awesomeness-mgmt/shared'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -12,6 +5,13 @@ import LinearProgress from '@mui/material/LinearProgress'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import {
+  BREW_HOURS_BY_RARITY,
+  BREW_SESSION_HOURS,
+  type BrewingState,
+  type Recipe,
+  startBrewSchema,
+} from '@player-ledger/shared'
 import { type FormEvent, useState } from 'react'
 import { parseWhole, percentOf } from '@/components/brewing/progress'
 import EmptyState from '@/components/ledger/EmptyState'

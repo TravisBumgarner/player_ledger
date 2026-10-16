@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readdirSync, statSync } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { BACKUP_NAME, type Backup, restoreBackupSchema } from '@awesomeness-mgmt/shared'
+import { BACKUP_NAME, type Backup, restoreBackupSchema } from '@player-ledger/shared'
 import { type Request, type Response, Router } from 'express'
 import config from '../config.js'
 import { sqlite } from '../db/index.js'

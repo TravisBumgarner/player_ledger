@@ -1,4 +1,4 @@
-import type { ApiResponse, CreateSpell, Spell, UpdateSpell } from '@awesomeness-mgmt/shared'
+import type { ApiResponse, CreateSpell, Spell, UpdateSpell } from '@player-ledger/shared'
 import { apiFetch } from './client'
 
 const spellsPath = (characterId: string) => `/characters/${encodeURIComponent(characterId)}/spells`

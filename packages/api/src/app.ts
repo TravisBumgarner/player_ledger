@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { log } from '@awesomeness-mgmt/shared'
+import { log } from '@player-ledger/shared'
 import cors from 'cors'
 import express, { type ErrorRequestHandler } from 'express'
 import helmet from 'helmet'

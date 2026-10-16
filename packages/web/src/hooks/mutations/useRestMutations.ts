@@ -1,4 +1,4 @@
-import type { RestKind } from '@awesomeness-mgmt/shared'
+import type { RestKind } from '@player-ledger/shared'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { takeRest } from '@/api/rest'
 import { ApiError } from '@/lib/ApiError'

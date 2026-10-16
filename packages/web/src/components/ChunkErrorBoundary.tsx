@@ -1,4 +1,4 @@
-import { log } from '@awesomeness-mgmt/shared'
+import { log } from '@player-ledger/shared'
 import { Component, type ReactNode } from 'react'
 
 type Props = { children: ReactNode }

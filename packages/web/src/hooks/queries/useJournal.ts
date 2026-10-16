@@ -1,4 +1,4 @@
-import type { NoteKind } from '@awesomeness-mgmt/shared'
+import type { NoteKind } from '@player-ledger/shared'
 import { useQuery } from '@tanstack/react-query'
 import { getGoals, getModifiers, getNotes } from '@/api/journal'
 import { ApiError } from '@/lib/ApiError'

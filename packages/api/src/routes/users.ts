@@ -2,7 +2,7 @@ import {
   createCharacterSchema,
   createUserSchema,
   renameCharacterSchema,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { type Request, type Response, Router } from 'express'
 import {
   findOrCreateCharacter,

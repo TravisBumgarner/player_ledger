@@ -1,4 +1,4 @@
-import type { Character, User } from '@awesomeness-mgmt/shared'
+import type { Character, User } from '@player-ledger/shared'
 import { and, asc, eq, sql } from 'drizzle-orm'
 import { db } from '../index.js'
 import { type CharacterRow, characters, type UserRow, users } from '../schema.js'

@@ -1,7 +1,7 @@
-import { MENTION_NODE, type RichDoc } from '@awesomeness-mgmt/shared'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import type { Theme } from '@mui/material/styles'
+import { MENTION_NODE, type RichDoc } from '@player-ledger/shared'
 import { Placeholder } from '@tiptap/extensions'
 import { type AnyExtension, type Content, EditorContent, Extension, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'

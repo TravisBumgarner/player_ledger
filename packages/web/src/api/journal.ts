@@ -10,7 +10,7 @@ import type {
   UpdateGoal,
   UpdateModifier,
   UpdateSessionNote,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { apiFetch } from './client'
 
 const characterPath = (characterId: string) => `/characters/${encodeURIComponent(characterId)}`

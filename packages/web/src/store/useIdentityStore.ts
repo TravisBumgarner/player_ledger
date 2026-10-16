@@ -9,6 +9,16 @@ type State = {
   setCharacterId: (characterId: string | null) => void
 }
 
+const STORAGE_KEY = 'player-ledger:identity'
+
+// The app was renamed; carry the remembered identity over once rather than asking again.
+try {
+  const legacy = localStorage.getItem('awesomeness-mgmt:identity')
+  if (legacy && !localStorage.getItem(STORAGE_KEY)) localStorage.setItem(STORAGE_KEY, legacy)
+} catch {
+  // Storage can be unavailable; the picker simply asks.
+}
+
 /** Who is at the keyboard, remembered per device until there is a real login. */
 const useIdentityStore = create<State>()(
   devtools(
@@ -20,7 +30,7 @@ const useIdentityStore = create<State>()(
         setCharacterId: (characterId) => set({ characterId }),
       }),
       {
-        name: 'awesomeness-mgmt:identity',
+        name: STORAGE_KEY,
         storage: createJSONStorage(() => localStorage),
         partialize: ({ userId, characterId }) => ({ userId, characterId }),
       },

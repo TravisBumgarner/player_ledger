@@ -20,7 +20,7 @@ jobs:
       - run: npm ci
 
       # shared must exist before anything downstream can typecheck.
-      - run: npm run build -w @awesomeness-mgmt/shared
+      - run: npm run build -w @player-ledger/shared
 
       - run: npm run check
 

@@ -3,7 +3,7 @@ import {
   createItemSchema,
   logItemUseSchema,
   updateItemSchema,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { type Request, type Response, Router } from 'express'
 import {
   addNote,

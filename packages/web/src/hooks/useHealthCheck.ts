@@ -1,4 +1,4 @@
-import type { Health } from '@awesomeness-mgmt/shared'
+import type { Health } from '@player-ledger/shared'
 import { useQuery } from '@tanstack/react-query'
 import { apiFetch } from '@/api/client'
 import { ApiError } from '@/lib/ApiError'

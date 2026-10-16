@@ -1,7 +1,7 @@
-import { type CharacterProfile, profileImagePath } from '@awesomeness-mgmt/shared'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
+import { type CharacterProfile, profileImagePath } from '@player-ledger/shared'
 import config from '@/config'
 
 export function profileImageUrl(characterId: string, profile: CharacterProfile): string | null {

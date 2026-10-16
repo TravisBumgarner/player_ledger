@@ -1,6 +1,6 @@
-import { type InventoryItem, ITEM_CATEGORIES } from '@awesomeness-mgmt/shared'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import { type InventoryItem, ITEM_CATEGORIES } from '@player-ledger/shared'
 import { useState } from 'react'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
 import ItemCategoryTable from '@/components/inventory/ItemCategoryTable'

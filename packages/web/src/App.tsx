@@ -1,5 +1,5 @@
-import { log } from '@awesomeness-mgmt/shared'
 import Box from '@mui/material/Box'
+import { log } from '@player-ledger/shared'
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import ChunkErrorBoundary from '@/components/ChunkErrorBoundary'

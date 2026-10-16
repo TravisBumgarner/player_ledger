@@ -7,7 +7,7 @@ import type {
   NoteKind,
   SessionNote,
   UpdateSessionNote,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   createGoal,
