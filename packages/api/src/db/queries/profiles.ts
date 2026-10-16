@@ -3,6 +3,7 @@ import {
   type CharacterProfile,
   type CreateNpc,
   MENTION_NODE,
+  type NoteKind,
   type ProfileImageType,
   type ProfileRef,
   parseProfileRef,
@@ -15,7 +16,6 @@ import { and, asc, eq, like, sql } from 'drizzle-orm'
 import { db } from '../index.js'
 import {
   type CharacterProfileRow,
-  characterDevelopment,
   characterProfiles,
   characters,
   sessionNotes,
@@ -23,6 +23,13 @@ import {
 } from '../schema.js'
 
 const EMPTY_DOC: RichDoc = { type: 'doc' }
+
+const NOTE_SOURCES: Record<NoteKind, Backlink['source']> = {
+  session: 'sessionNote',
+  brewing: 'brewingNote',
+  grafting: 'graftingNote',
+  development: 'development',
+}
 
 /** Every column but the image bytes, which only the image route reads. */
 const profileColumns = {
@@ -216,7 +223,7 @@ export async function listBacklinks(ledgerId: string, ref: ProfileRef): Promise<
   const noteLinks = notes
     .filter((note) => mentions(note.body, ref))
     .map((note) => ({
-      source: note.kind === 'brewing' ? ('brewingNote' as const) : ('sessionNote' as const),
+      source: NOTE_SOURCES[note.kind],
       id: note.id,
       title: note.date,
       at: note.createdAt,
@@ -235,25 +242,7 @@ export async function listBacklinks(ledgerId: string, ref: ProfileRef): Promise<
       at: row.createdAt,
     }))
 
-  const [development] = await db
-    .select()
-    .from(characterDevelopment)
-    .where(
-      and(eq(characterDevelopment.characterId, ledgerId), like(characterDevelopment.body, pattern)),
-    )
-  const developmentLinks =
-    development && mentions(development.body, ref)
-      ? [
-          {
-            source: 'development' as const,
-            id: ledgerId,
-            title: 'Character development',
-            at: development.updatedAt,
-          },
-        ]
-      : []
-
-  return [...noteLinks, ...profileLinks, ...developmentLinks]
+  return [...noteLinks, ...profileLinks]
     .sort((a, b) => b.at.getTime() - a.at.getTime())
     .map(({ at, ...link }) => ({ ...link, createdAt: at.toISOString() }))
 }

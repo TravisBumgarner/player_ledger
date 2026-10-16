@@ -1,17 +1,19 @@
 import { createGoalSchema } from '@awesomeness-mgmt/shared'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Paper from '@mui/material/Paper'
-import TextField from '@mui/material/TextField'
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
 import Typography from '@mui/material/Typography'
-import { type FormEvent, useState } from 'react'
+import { useState } from 'react'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
+import AddRow from '@/components/ledger/AddRow'
+import Badge from '@/components/ledger/Badge'
+import { AnimatePresence, MotionRow } from '@/components/ledger/motion'
+import Section from '@/components/ledger/Section'
 import { useCreateGoal, useDeleteGoal, useToggleGoal } from '@/hooks/mutations/useJournalMutations'
 import { useGoals } from '@/hooks/queries/useJournal'
 import { errorMessage } from '@/lib/errorMessages'
 import LoadFailure from '@/sharedComponents/LoadFailure'
 import Loading from '@/sharedComponents/Loading'
-import SectionLabel from '@/sharedComponents/SectionLabel'
 import GoalRow from './GoalRow'
 
 export default function GoalsCard() {
@@ -20,75 +22,73 @@ export default function GoalsCard() {
   const createGoal = useCreateGoal(character.id)
   const toggleGoal = useToggleGoal(character.id)
   const deleteGoal = useDeleteGoal(character.id)
-  const [text, setText] = useState('')
 
-  const parsed = createGoalSchema.safeParse({ text })
   const mutationError = createGoal.error ?? toggleGoal.error ?? deleteGoal.error
-
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault()
-    if (!parsed.success) return
-    createGoal.mutate(parsed.data, { onSuccess: () => setText('') })
-  }
+  const done = goals.data?.filter((goal) => goal.done).length ?? 0
+  const [showCompleted, setShowCompleted] = useState(false)
 
   return (
-    <Box component="section" sx={{ display: 'grid', gap: '10px' }}>
-      <SectionLabel>Goals</SectionLabel>
-      <Paper variant="section">
-        {goals.isPending ? (
-          <Loading size={20} label="Loading goals" />
-        ) : goals.isError ? (
-          <LoadFailure
-            dense
-            error={goals.error}
-            fallback="Could not load goals."
-            onRetry={() => void goals.refetch()}
-          />
-        ) : goals.data.length === 0 ? (
-          <Typography variant="body2" data-empty="true">
-            No goals yet.
-          </Typography>
-        ) : (
-          <Box sx={{ display: 'grid', gap: 0.5 }}>
-            {goals.data.map((goal) => (
-              <GoalRow
-                key={goal.id}
-                goal={goal}
-                disabled={deleteGoal.isPending}
-                onToggle={(done) => toggleGoal.mutate({ goalId: goal.id, done })}
-                onRemove={() => deleteGoal.mutate(goal.id)}
-              />
-            ))}
+    <Section
+      title="Goals"
+      right={
+        goals.data ? (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={showCompleted}
+                  onChange={(event) => setShowCompleted(event.target.checked)}
+                  sx={{ p: 1 }}
+                />
+              }
+              label="Show completed"
+            />
+            <Badge>{`${done}/${goals.data.length}`}</Badge>
           </Box>
-        )}
-
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}
-        >
-          <TextField
-            size="small"
-            placeholder="new goal..."
-            aria-label="New goal"
-            value={text}
-            onChange={(event) => setText(event.target.value)}
-            sx={{ flex: 1, minWidth: 180 }}
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={!parsed.success || createGoal.isPending}
-          >
-            Add Goal
-          </Button>
-        </Box>
-        {mutationError ? (
-          <Typography variant="body2" role="alert">
-            {errorMessage(mutationError)}
-          </Typography>
-        ) : null}
-      </Paper>
-    </Box>
+        ) : null
+      }
+    >
+      {goals.isPending ? (
+        <Loading size={20} label="Loading goals" />
+      ) : goals.isError ? (
+        <LoadFailure
+          dense
+          error={goals.error}
+          fallback="Could not load goals."
+          onRetry={() => void goals.refetch()}
+        />
+      ) : (
+        <AnimatePresence initial={false}>
+          {goals.data
+            .filter((goal) => showCompleted || !goal.done)
+            .map((goal) => (
+              <MotionRow key={goal.id}>
+                <GoalRow
+                  key={goal.id}
+                  goal={goal}
+                  disabled={deleteGoal.isPending}
+                  onToggle={(next) => toggleGoal.mutate({ goalId: goal.id, done: next })}
+                  onRemove={() => deleteGoal.mutate(goal.id)}
+                />
+              </MotionRow>
+            ))}
+        </AnimatePresence>
+      )}
+      <AddRow
+        placeholder="Add a goal…"
+        label="New goal"
+        maxLength={500}
+        disabled={createGoal.isPending}
+        onAdd={async (text) => {
+          const parsed = createGoalSchema.safeParse({ text })
+          if (parsed.success) await createGoal.mutateAsync(parsed.data)
+        }}
+      />
+      {mutationError ? (
+        <Typography variant="caption" role="alert" sx={{ color: 'error.main' }}>
+          {errorMessage(mutationError)}
+        </Typography>
+      ) : null}
+    </Section>
   )
 }

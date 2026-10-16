@@ -10,14 +10,15 @@ import LedgerLayout from '@/components/layout/LedgerLayout'
 import { useHealthCheck } from '@/hooks/useHealthCheck'
 import { ROUTES } from '@/lib/routes'
 import Brewing from '@/pages/Brewing'
-import Characters from '@/pages/Characters'
+import CharacterDevelopment from '@/pages/CharacterDevelopment'
+import Combat from '@/pages/Combat'
+import Grafting from '@/pages/Grafting'
 import Inventory from '@/pages/Inventory'
 import NotFound from '@/pages/NotFound'
-import Overview from '@/pages/Overview'
+import Npcs from '@/pages/Npcs'
 import SessionNotes from '@/pages/SessionNotes'
-import Spells from '@/pages/Spells'
 import Loading from '@/sharedComponents/Loading'
-import AppThemeProvider from '@/styles/Theme'
+import AppThemeProvider from '@/theme'
 
 // Module scope: one QueryClient for the app's lifetime.
 export const queryClient = new QueryClient({
@@ -68,14 +69,15 @@ function AppRoutes() {
   return (
     <IdentityGate>
       <Routes>
-        <Route path={ROUTES.home} element={<Navigate to={ROUTES.overview} replace />} />
+        <Route path={ROUTES.home} element={<Navigate to={ROUTES.sessionNotes} replace />} />
         <Route element={<LedgerLayout />}>
-          <Route path={ROUTES.overview} element={<Overview />} />
-          <Route path={ROUTES.spells} element={<Spells />} />
+          <Route path={ROUTES.combat} element={<Combat />} />
           <Route path={ROUTES.inventory} element={<Inventory />} />
           <Route path={ROUTES.brewing} element={<Brewing />} />
-          <Route path={ROUTES.characters} element={<Characters />} />
+          <Route path={ROUTES.grafting} element={<Grafting />} />
+          <Route path={ROUTES.npcs} element={<Npcs />} />
           <Route path={ROUTES.sessionNotes} element={<SessionNotes />} />
+          <Route path={ROUTES.development} element={<CharacterDevelopment />} />
         </Route>
         {/* A dead address says so rather than bouncing home, which reads as the
           link having worked. */}

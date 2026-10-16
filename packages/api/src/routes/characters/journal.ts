@@ -1,24 +1,28 @@
 import {
   createGoalSchema,
+  createModifierSchema,
   createSessionNoteSchema,
   type NoteKind,
-  updateCharacterDevelopmentSchema,
   updateGoalSchema,
+  updateModifierSchema,
   updateSessionNoteSchema,
 } from '@awesomeness-mgmt/shared'
 import { type Request, type Response, Router } from 'express'
 import {
   createGoal,
+  createModifier,
   createSessionNote,
   deleteGoal,
+  deleteModifier,
   deleteSessionNote,
-  getCharacterDevelopment,
   listGoals,
+  listModifiers,
   listSessionNotes,
-  saveCharacterDevelopment,
   toGoal,
+  toModifier,
   toSessionNote,
   updateGoal,
+  updateModifier,
   updateSessionNote,
 } from '../../db/queries/journal.js'
 import { sendError, sendSuccess } from '../shared/responses.js'
@@ -28,6 +32,7 @@ import { characterIdOf } from './scope.js'
 const router: Router = Router()
 
 type GoalParams = { goalId: string }
+type ModifierParams = { modifierId: string }
 type NoteParams = { noteId: string }
 
 async function getGoals(_req: Request, res: Response): Promise<void> {
@@ -55,6 +60,33 @@ async function removeGoal(req: Request<GoalParams>, res: Response): Promise<void
   const deleted = await deleteGoal(characterIdOf(res), req.params.goalId)
   if (!deleted) return sendError(res, 'NOT_FOUND', 404)
   sendSuccess(res, { id: req.params.goalId })
+}
+
+async function getModifiers(_req: Request, res: Response): Promise<void> {
+  const rows = await listModifiers(characterIdOf(res))
+  sendSuccess(res, rows.map(toModifier))
+}
+
+async function postModifier(req: Request, res: Response): Promise<void> {
+  const parsed = createModifierSchema.safeParse(req.body)
+  if (!parsed.success) return sendError(res, 'INVALID_INPUT', 400)
+
+  sendSuccess(res, toModifier(await createModifier(characterIdOf(res), parsed.data)), 201)
+}
+
+async function patchModifier(req: Request<ModifierParams>, res: Response): Promise<void> {
+  const parsed = updateModifierSchema.safeParse(req.body)
+  if (!parsed.success) return sendError(res, 'INVALID_INPUT', 400)
+
+  const row = await updateModifier(characterIdOf(res), req.params.modifierId, parsed.data)
+  if (!row) return sendError(res, 'NOT_FOUND', 404)
+  sendSuccess(res, toModifier(row))
+}
+
+async function removeModifier(req: Request<ModifierParams>, res: Response): Promise<void> {
+  const deleted = await deleteModifier(characterIdOf(res), req.params.modifierId)
+  if (!deleted) return sendError(res, 'NOT_FOUND', 404)
+  sendSuccess(res, { id: req.params.modifierId })
 }
 
 /** Session notes and brewing notes share a shape and a table; only the path and kind differ. */
@@ -92,24 +124,17 @@ function notesRouter(kind: NoteKind): Router {
   return notes
 }
 
-async function getDevelopment(_req: Request, res: Response): Promise<void> {
-  sendSuccess(res, await getCharacterDevelopment(characterIdOf(res)))
-}
-
-async function putDevelopment(req: Request, res: Response): Promise<void> {
-  const parsed = updateCharacterDevelopmentSchema.safeParse(req.body)
-  if (!parsed.success) return sendError(res, 'INVALID_INPUT', 400)
-
-  sendSuccess(res, await saveCharacterDevelopment(characterIdOf(res), parsed.data.body))
-}
-
 router.get('/goals', getGoals)
 router.post('/goals', postGoal)
 router.patch('/goals/:goalId', patchGoal)
 router.delete('/goals/:goalId', removeGoal)
+router.get('/modifiers', getModifiers)
+router.post('/modifiers', postModifier)
+router.patch('/modifiers/:modifierId', patchModifier)
+router.delete('/modifiers/:modifierId', removeModifier)
 router.use('/session-notes', notesRouter('session'))
 router.use('/brewing-notes', notesRouter('brewing'))
-router.get('/development', getDevelopment)
-router.put('/development', putDevelopment)
+router.use('/grafting-notes', notesRouter('grafting'))
+router.use('/development-notes', notesRouter('development'))
 
 export default router

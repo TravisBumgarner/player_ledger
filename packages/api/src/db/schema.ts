@@ -195,6 +195,19 @@ export const goals = sqliteTable(
 
 export type GoalRow = typeof goals.$inferSelect
 
+export const modifiers = sqliteTable(
+  'modifiers',
+  {
+    id: id(),
+    characterId: characterId(),
+    text: text('text').notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [index('modifiers_character_idx').on(table.characterId, table.createdAt)],
+)
+
+export type ModifierRow = typeof modifiers.$inferSelect
+
 /** One row per character, created on first save. */
 export const characterDevelopment = sqliteTable('character_development', {
   characterId: text('character_id')

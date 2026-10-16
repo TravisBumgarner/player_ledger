@@ -4,29 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>awesomeness-mgmt</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300..700;1,300..700&display=swap"
-      rel="stylesheet"
-    />
     <script>
-      // Runs before the bundle, because by the time React mounts the loading
-      // window has already been painted — white, for a dark-mode user, on every
-      // cold load. Keys and attribute must match src/styles/Theme.tsx.
+      // Paints the ground before the bundle loads, so a cold start is never a white flash.
+      // Keys must match src/theme/index.tsx.
       ;(() => {
         try {
-          const mode = localStorage.getItem('mui-mode') || 'system'
-          const dark =
-            mode === 'dark' ||
-            (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
-          const root = document.documentElement
-          root.setAttribute('data-mui-color-scheme', dark ? 'dark' : 'light')
-          // The canvas the browser paints before any stylesheet exists.
-          root.style.colorScheme = dark ? 'dark' : 'light'
+          const grounds = { grove: '#1b1a1d', neutral: '#1a1918' }
+          const palette = localStorage.getItem('ledger-palette')
+          document.documentElement.style.background = grounds[palette] || grounds.grove
         } catch {
-          // Storage can throw outright in a locked-down browser; light is the default.
+          // Storage can throw in a locked-down browser; the default ground is fine.
         }
+        document.documentElement.style.colorScheme = 'dark'
       })()
     </script>
   </head>

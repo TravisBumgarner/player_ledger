@@ -1,7 +1,7 @@
 import type { CharacterProfile } from '@awesomeness-mgmt/shared'
 import CloseIcon from '@mui/icons-material/Close'
 import Box from '@mui/material/Box'
-import Divider from '@mui/material/Divider'
+import Button from '@mui/material/Button'
 import Drawer from '@mui/material/Drawer'
 import IconButton from '@mui/material/IconButton'
 import Paper from '@mui/material/Paper'
@@ -9,21 +9,18 @@ import { useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
+import { AnimatePresence, EASE, motion, SLOW } from '@/components/ledger/motion'
 import { useProfiles } from '@/hooks/queries/useProfiles'
 import LoadFailure from '@/sharedComponents/LoadFailure'
 import Loading from '@/sharedComponents/Loading'
-import TextAction from '@/sharedComponents/TextAction'
 import { useCloseProfile, useOpenProfile, useOpenProfileRef } from '@/store/useCharacterPanelStore'
+import { LAYOUT } from '@/theme/tokens'
 import { profileMeta } from './CharacterRow'
 import DeleteNpcAction from './DeleteNpcAction'
 import ProfileBacklinks from './ProfileBacklinks'
 import ProfileDescription from './ProfileDescription'
 import ProfileNotes from './ProfileNotes'
 import ProfilePortraitEditor from './ProfilePortraitEditor'
-
-/** The sticky app bar: a 40px toolbar and its 1px rule. The docked panel pins beneath it. */
-const APP_BAR_HEIGHT = 41
-const PORTRAIT_SIZE = 200
 
 /**
  * Docked beside the page from `md` up, so a session note and a character can be
@@ -34,29 +31,44 @@ export default function CharacterPanel() {
   const closeProfile = useCloseProfile()
   const theme = useTheme()
   const docked = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true })
+  const wide = useMediaQuery(theme.breakpoints.up('lg'), { noSsr: true })
 
   if (docked) {
-    if (!openRef) return null
+    const width = wide ? 380 : 340
     return (
-      <Paper
-        component="aside"
-        aria-label="Character"
-        variant="panelBody"
-        data-edge="left"
-        square
-        sx={{
-          width: { md: 340, lg: 380 },
-          flex: 'none',
-          ml: 'auto',
-          alignSelf: 'flex-start',
-          position: 'sticky',
-          top: APP_BAR_HEIGHT,
-          height: `calc(100dvh - ${APP_BAR_HEIGHT}px)`,
-          overflowY: 'auto',
-        }}
-      >
-        <PanelBody key={openRef} profileRef={openRef} />
-      </Paper>
+      <AnimatePresence initial={false}>
+        {openRef ? (
+          <motion.div
+            key="panel"
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width, opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            transition={{ duration: SLOW, ease: EASE }}
+            style={{ flex: 'none', marginLeft: 'auto', overflow: 'hidden', display: 'flex' }}
+          >
+            <Paper
+              component="aside"
+              aria-label="Character"
+              variant="panelBody"
+              data-edge="left"
+              square
+              // Fixed width inside the growing wrapper, so text never reflows while it opens.
+              sx={{ width, flex: 'none', overflowY: 'auto' }}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={openRef}
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -12 }}
+                >
+                  <PanelBody profileRef={openRef} />
+                </motion.div>
+              </AnimatePresence>
+            </Paper>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     )
   }
 
@@ -67,7 +79,7 @@ export default function CharacterPanel() {
       onClose={closeProfile}
       slotProps={{
         paper: {
-          variant: 'modal',
+          variant: 'panelBody',
           component: 'aside',
           'aria-label': 'Character',
           sx: { width: { xs: '100%', sm: 420 } },
@@ -86,21 +98,10 @@ function PanelBody({ profileRef }: { profileRef: string }) {
   const profile = profiles.data?.find((row) => row.ref === profileRef)
 
   return (
-    <Box sx={{ display: 'grid', gap: 2, alignContent: 'start', p: '14px 18px 24px' }}>
-      <Box
-        sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1 }}
-      >
-        {profile ? (
-          <Box sx={{ display: 'grid', gap: 0.25, minWidth: 0, pt: 0.5 }}>
-            <Typography variant="h4" component="h2">
-              {profile.name}
-            </Typography>
-            <Typography variant="caption">{profileMeta(profile)}</Typography>
-          </Box>
-        ) : (
-          <Box />
-        )}
-        <IconButton aria-label="Close" onClick={closeProfile} sx={{ mr: -1, mt: -0.5 }}>
+    <Box sx={{ display: 'grid', gap: 8, alignContent: 'start', p: 5 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+        <Typography variant="capsXs">{profile ? profileMeta(profile) : 'Character'}</Typography>
+        <IconButton aria-label="Close" onClick={closeProfile} sx={{ my: -2, mr: -2 }}>
           <CloseIcon fontSize="small" />
         </IconButton>
       </Box>
@@ -117,11 +118,13 @@ function PanelBody({ profileRef }: { profileRef: string }) {
       ) : profile ? (
         <ProfileDetails profile={profile} />
       ) : (
-        <Box sx={{ display: 'grid', gap: 1, justifyItems: 'start' }}>
-          <Typography variant="body2" data-empty="true">
+        <Box sx={{ display: 'grid', gap: 3, justifyItems: 'start' }}>
+          <Typography variant="bodySm" data-empty="true">
             That character is no longer here.
           </Typography>
-          <TextAction onClick={closeProfile}>Close</TextAction>
+          <Button variant="quiet" onClick={closeProfile} sx={{ ml: -2 }}>
+            Close
+          </Button>
         </Box>
       )}
     </Box>
@@ -134,17 +137,23 @@ function ProfileDetails({ profile }: { profile: CharacterProfile }) {
 
   return (
     <>
-      <ProfilePortraitEditor profile={profile} size={PORTRAIT_SIZE} />
-      <ProfileDescription profile={profile} />
-      <Divider />
+      <Box sx={{ display: 'grid', gap: 5, justifyItems: 'center', mt: -4 }}>
+        <ProfilePortraitEditor profile={profile} size={LAYOUT.portrait.w} />
+        <Box sx={{ display: 'grid', gap: 1, justifySelf: 'stretch' }}>
+          <Typography
+            variant="title"
+            component="h2"
+            sx={{ color: 'ledger.accent', textAlign: 'center' }}
+          >
+            {profile.name}
+          </Typography>
+          <ProfileDescription profile={profile} align="center" />
+        </Box>
+      </Box>
       <ProfileNotes profile={profile} />
-      <Divider />
       <ProfileBacklinks profileRef={profile.ref} onOpenProfile={openProfile} />
       {profile.kind === 'npc' ? (
-        <>
-          <Divider />
-          <DeleteNpcAction profile={profile} onDeleted={closeProfile} />
-        </>
+        <DeleteNpcAction profile={profile} onDeleted={closeProfile} />
       ) : null}
     </>
   )

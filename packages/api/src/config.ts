@@ -12,6 +12,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   DATABASE_PATH: z.string().min(1).default('./data/app.sqlite'),
   FRONTEND_URL: z.string().min(1).default('http://localhost:38472'),
+  DESKTOP: z.enum(['0', '1']).default('0'),
 })
 
 // Listed explicitly: bundlers replace `process.env.FOO` statically, so the whole
@@ -21,6 +22,7 @@ const envVars = {
   NODE_ENV: process.env.NODE_ENV,
   DATABASE_PATH: process.env.DATABASE_PATH,
   FRONTEND_URL: process.env.FRONTEND_URL,
+  DESKTOP: process.env.DESKTOP,
 }
 
 const parsed = envSchema.safeParse(envVars)
@@ -40,4 +42,6 @@ export default {
   // Against packageRoot, not cwd: `npm run dev` and `npm start` start in different places.
   databasePath: resolve(packageRoot, parsed.data.DATABASE_PATH),
   frontendUrl: parsed.data.FRONTEND_URL,
+  /** Served to an Electron window over plain http on 127.0.0.1. */
+  isDesktop: parsed.data.DESKTOP === '1',
 }

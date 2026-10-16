@@ -16,7 +16,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Tooltip from '@mui/material/Tooltip'
 import type { Editor } from '@tiptap/react'
 import { useEditorState } from '@tiptap/react'
-import type { MouseEvent } from 'react'
+import type { MouseEvent, ReactNode } from 'react'
 
 const BLOCKS = [
   { value: 'paragraph', label: 'Body' },
@@ -40,22 +40,25 @@ const WRAPS = [
   { value: 'blockquote', label: 'Quote', Icon: FormatQuoteIcon },
 ] as const
 
-/** What a note written beside something else needs, and nothing more. */
-const COMPACT_MARKS = MARKS.filter((mark) => mark.value === 'bold' || mark.value === 'italic')
-const COMPACT_WRAPS = WRAPS.filter((wrap) => wrap.value !== 'blockquote')
+/** Everything else in the minimal set comes from markdown input rules: `# `, `> `, `1. `, backticks. */
+const MINIMAL = [
+  { value: 'bold', label: 'Bold', Icon: FormatBoldIcon },
+  { value: 'italic', label: 'Italic', Icon: FormatItalicIcon },
+  { value: 'bulletList', label: 'Bulleted list', Icon: FormatListBulletedIcon },
+] as const
+
+export type ToolbarVariant = 'minimal' | 'full'
 
 /** Reads the editor rather than holding state, so a keyboard shortcut lights the button too. */
 export default function Toolbar({
   editor,
-  compact = false,
+  variant = 'full',
+  end,
 }: {
   editor: Editor
-  /**
-   * The set for an editor embedded in a panel that is mostly something else:
-   * bold, italic, two kinds of list and a link. Headings, quotes, code and
-   * history are the full editor's.
-   */
-  compact?: boolean
+  variant?: ToolbarVariant
+  /** Trailing controls, such as the minimal toolbar's Done. */
+  end?: ReactNode
 }) {
   const state = useEditorState({
     editor,
@@ -68,6 +71,7 @@ export default function Toolbar({
       marks: MARKS.filter((mark) => current.isActive(mark.value)).map((mark) => mark.value),
       wraps: WRAPS.filter((wrap) => current.isActive(wrap.value)).map((wrap) => wrap.value),
       link: current.isActive('link') as boolean,
+      bulletList: current.isActive('bulletList') as boolean,
       canUndo: current.can().undo(),
       canRedo: current.can().redo(),
     }),
@@ -91,8 +95,48 @@ export default function Toolbar({
   // Keeps focus in the document: a focused button would take the next Enter as a click.
   const keepFocus = (event: MouseEvent) => event.preventDefault()
 
-  const marks = compact ? COMPACT_MARKS : MARKS
-  const wraps = compact ? COMPACT_WRAPS : WRAPS
+  if (variant === 'minimal') {
+    const pressed = {
+      bold: state.marks.includes('bold'),
+      italic: state.marks.includes('italic'),
+      bulletList: state.bulletList,
+    }
+    return (
+      <Box
+        role="toolbar"
+        aria-label="Formatting"
+        sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '2px' }}
+      >
+        {MINIMAL.map(({ value, label, Icon }) => (
+          <IconButton
+            key={value}
+            onMouseDown={keepFocus}
+            aria-label={label}
+            aria-pressed={pressed[value]}
+            sx={{ width: 32, height: 32 }}
+            onClick={() => {
+              const chain = editor.chain().focus()
+              if (value === 'bulletList') chain.toggleBulletList().run()
+              else chain.toggleMark(value).run()
+            }}
+          >
+            <Icon fontSize="small" />
+          </IconButton>
+        ))}
+        <IconButton
+          onMouseDown={keepFocus}
+          aria-label="Link"
+          aria-pressed={state.link}
+          sx={{ width: 32, height: 32 }}
+          onClick={setLink}
+        >
+          <LinkIcon fontSize="small" />
+        </IconButton>
+        <Box sx={{ flex: 1 }} />
+        {end}
+      </Box>
+    )
+  }
 
   const setBlock = (value: BlockValue | null) => {
     if (!value) return
@@ -109,49 +153,38 @@ export default function Toolbar({
   const group = {
     '& .MuiToggleButton-root': { p: '2px 6px', minWidth: 0, border: 0 },
     border: '1px solid',
-    borderColor: 'wireframe.borderFaint',
+    borderColor: 'ledger.line',
   }
 
   return (
     <Paper
-      variant={compact ? 'outlined' : 'strip'}
+      variant="strip"
       elevation={0}
-      sx={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '4px',
-        p: compact ? '4px 5px' : '5px 7px',
-        alignItems: 'center',
-        ...(compact
-          ? { border: 0, borderBottom: '1px solid', borderColor: 'wireframe.borderFaint' }
-          : {}),
-      }}
+      sx={{ display: 'flex', flexWrap: 'wrap', gap: '4px', p: '5px 7px', alignItems: 'center' }}
     >
-      {compact ? null : (
-        <ToggleButtonGroup
-          exclusive
-          size="small"
-          sx={group}
-          value={state.block}
-          aria-label="Block style"
-        >
-          {BLOCKS.map((option) => (
-            <ToggleButton
-              onMouseDown={keepFocus}
-              key={option.value}
-              value={option.value}
-              aria-label={option.label}
-              aria-pressed={state.block === option.value}
-              onClick={() => setBlock(option.value)}
-            >
-              {option.label}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      )}
+      <ToggleButtonGroup
+        exclusive
+        size="small"
+        sx={group}
+        value={state.block}
+        aria-label="Block style"
+      >
+        {BLOCKS.map((option) => (
+          <ToggleButton
+            onMouseDown={keepFocus}
+            key={option.value}
+            value={option.value}
+            aria-label={option.label}
+            aria-pressed={state.block === option.value}
+            onClick={() => setBlock(option.value)}
+          >
+            {option.label}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
 
       <ToggleButtonGroup size="small" sx={group} value={state.marks} aria-label="Text style">
-        {marks.map(({ value, label, Icon }) => (
+        {MARKS.map(({ value, label, Icon }) => (
           <ToggleButton
             onMouseDown={keepFocus}
             key={value}
@@ -166,7 +199,7 @@ export default function Toolbar({
       </ToggleButtonGroup>
 
       <ToggleButtonGroup size="small" sx={group} value={state.wraps} aria-label="Blocks">
-        {wraps.map(({ value, label, Icon }) => (
+        {WRAPS.map(({ value, label, Icon }) => (
           <ToggleButton
             onMouseDown={keepFocus}
             key={value}
@@ -204,36 +237,35 @@ export default function Toolbar({
 
       <Box sx={{ flex: 1 }} />
 
-      {compact ? null : (
-        <>
-          <Tooltip title="Undo">
-            <span>
-              <IconButton
-                onMouseDown={keepFocus}
-                size="small"
-                aria-label="Undo"
-                disabled={!state.canUndo}
-                onClick={() => editor.chain().focus().undo().run()}
-              >
-                <UndoIcon fontSize="small" />
-              </IconButton>
-            </span>
-          </Tooltip>
-          <Tooltip title="Redo">
-            <span>
-              <IconButton
-                onMouseDown={keepFocus}
-                size="small"
-                aria-label="Redo"
-                disabled={!state.canRedo}
-                onClick={() => editor.chain().focus().redo().run()}
-              >
-                <RedoIcon fontSize="small" />
-              </IconButton>
-            </span>
-          </Tooltip>
-        </>
-      )}
+      <>
+        <Tooltip title="Undo">
+          <span>
+            <IconButton
+              onMouseDown={keepFocus}
+              size="small"
+              aria-label="Undo"
+              disabled={!state.canUndo}
+              onClick={() => editor.chain().focus().undo().run()}
+            >
+              <UndoIcon fontSize="small" />
+            </IconButton>
+          </span>
+        </Tooltip>
+        <Tooltip title="Redo">
+          <span>
+            <IconButton
+              onMouseDown={keepFocus}
+              size="small"
+              aria-label="Redo"
+              disabled={!state.canRedo}
+              onClick={() => editor.chain().focus().redo().run()}
+            >
+              <RedoIcon fontSize="small" />
+            </IconButton>
+          </span>
+        </Tooltip>
+      </>
+      {end}
     </Paper>
   )
 }

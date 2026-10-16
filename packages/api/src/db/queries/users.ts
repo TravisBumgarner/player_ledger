@@ -61,6 +61,27 @@ export async function findOrCreateCharacter(userId: string, name: string): Promi
   return row
 }
 
+/** Null when the user already has a character by that name (the names are unique, ignoring case). */
+export async function renameCharacter(
+  userId: string,
+  id: string,
+  name: string,
+): Promise<CharacterRow | null | undefined> {
+  const [clash] = await db
+    .select({ id: characters.id })
+    .from(characters)
+    .where(
+      and(eq(characters.userId, userId), eq(sql`lower(${characters.name})`, name.toLowerCase())),
+    )
+  if (clash && clash.id !== id) return null
+  const [row] = await db
+    .update(characters)
+    .set({ name })
+    .where(and(eq(characters.id, id), eq(characters.userId, userId)))
+    .returning()
+  return row
+}
+
 export async function findCharacter(id: string): Promise<CharacterRow | undefined> {
   const [row] = await db.select().from(characters).where(eq(characters.id, id))
   return row

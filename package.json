@@ -24,7 +24,9 @@
     "db:studio": "npm run db:studio -w @awesomeness-mgmt/api",
     "dev:wait-shared": "wait-on packages/shared/dist/index.js",
     "dev:wait-api": "wait-on http://localhost:38471/api/health",
-    "dev": "concurrently -n shared,api,web -c gray,blue,green \"npm run dev -w @awesomeness-mgmt/shared\" \"npm run dev:wait-shared && npm run db:migrate && npm run dev -w @awesomeness-mgmt/api\" \"npm run dev:wait-api && npm run dev -w @awesomeness-mgmt/web\"",
+    "dev": "concurrently -k -n shared,api,web,desktop -c gray,blue,green,magenta \"npm run dev -w @awesomeness-mgmt/shared\" \"npm run dev:wait-shared && npm run db:migrate && npm run dev -w @awesomeness-mgmt/api\" \"npm run dev:wait-api && npm run dev -w @awesomeness-mgmt/web\" \"npm run dev:wait-web && npm run dev -w @awesomeness-mgmt/desktop\"",
+    "dev:wait-web": "wait-on http://localhost:38472",
+    "dist:desktop": "npm run dist -w @awesomeness-mgmt/desktop",
     "prepare": "husky"
   },
   "lint-staged": {

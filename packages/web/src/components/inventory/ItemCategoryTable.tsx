@@ -1,20 +1,14 @@
-import {
-  type InventoryItem,
-  ITEM_CATEGORY_LABELS,
-  type ItemCategory,
-} from '@awesomeness-mgmt/shared'
-import Box from '@mui/material/Box'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import Typography from '@mui/material/Typography'
-import SectionLabel from '@/sharedComponents/SectionLabel'
+import type { InventoryItem, ItemCategory } from '@awesomeness-mgmt/shared'
+import DataTable from '@/components/ledger/DataTable'
+import { MotionRow } from '@/components/ledger/motion'
+import Section from '@/components/ledger/Section'
 import ItemRow, { ITEM_COLUMNS } from './ItemRow'
 
-const COLUMN_WIDTHS = [48, '22%', '14%', 'auto', 252]
+const TITLES: Record<ItemCategory, string> = {
+  consumables: 'Consumables',
+  items: 'Items',
+  abandoned: 'Abandoned · Lost · Used',
+}
 
 export type ItemCategoryTableProps = {
   category: ItemCategory
@@ -24,42 +18,23 @@ export type ItemCategoryTableProps = {
 
 export default function ItemCategoryTable({ category, items, onEdit }: ItemCategoryTableProps) {
   return (
-    <Box component="section" sx={{ display: 'grid', gap: '4px' }}>
-      <SectionLabel>{ITEM_CATEGORY_LABELS[category]}</SectionLabel>
-
-      {/* Scrolls inside itself so a narrow window never scrolls the page sideways. */}
-      <TableContainer>
-        <Table size="small" sx={{ minWidth: 760, tableLayout: 'fixed' }}>
-          {/* Fixed widths, so the three tables line their columns up with each other. */}
-          <colgroup>
-            {COLUMN_WIDTHS.map((width) => (
-              <Box key={width} component="col" sx={{ width }} />
-            ))}
-          </colgroup>
-          <TableHead>
-            <TableRow>
-              <TableCell padding="checkbox" />
-              <TableCell>Name</TableCell>
-              <TableCell>Qty</TableCell>
-              <TableCell>Notes</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {items.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={ITEM_COLUMNS}>
-                  <Typography variant="body2" data-empty="true">
-                    Nothing here.
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            ) : (
-              items.map((item) => <ItemRow key={item.id} item={item} onEdit={() => onEdit(item)} />)
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
+    <Section title={TITLES[category]}>
+      <DataTable
+        columns={ITEM_COLUMNS}
+        headers={['', 'Name', 'Qty', 'Notes', '']}
+        empty="Nothing here."
+      >
+        {items.map((item) => (
+          <MotionRow key={item.id}>
+            <ItemRow
+              key={item.id}
+              item={item}
+              dimmed={category === 'abandoned'}
+              onEdit={() => onEdit(item)}
+            />
+          </MotionRow>
+        ))}
+      </DataTable>
+    </Section>
   )
 }

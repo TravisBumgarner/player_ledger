@@ -3,6 +3,7 @@ import type {
   Character,
   CreateCharacter,
   CreateUser,
+  RenameCharacter,
   User,
 } from '@awesomeness-mgmt/shared'
 import { apiFetch } from './client'
@@ -24,4 +25,15 @@ export function createCharacter(
   body: CreateCharacter,
 ): Promise<ApiResponse<Character>> {
   return apiFetch(`/users/${encodeURIComponent(userId)}/characters`, { method: 'POST', body })
+}
+
+export function renameCharacter(
+  userId: string,
+  characterId: string,
+  body: RenameCharacter,
+): Promise<ApiResponse<Character>> {
+  return apiFetch(
+    `/users/${encodeURIComponent(userId)}/characters/${encodeURIComponent(characterId)}`,
+    { method: 'PATCH', body },
+  )
 }

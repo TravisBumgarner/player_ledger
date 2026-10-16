@@ -2,20 +2,21 @@ import { createIngredientSchema, type Ingredient, type Rarity } from '@awesomene
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Paper from '@mui/material/Paper'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { type FormEvent, useState } from 'react'
-import CardHeader from '@/components/brewing/CardHeader'
 import { RaritySelect } from '@/components/brewing/RecipesCard'
+import Badge from '@/components/ledger/Badge'
+import EmptyState from '@/components/ledger/EmptyState'
+import { AnimatePresence, MotionRow } from '@/components/ledger/motion'
+import RuledRow from '@/components/ledger/RuledRow'
+import Section from '@/components/ledger/Section'
 import {
   useCreateIngredient,
   useDeleteIngredient,
   useUpdateIngredient,
 } from '@/hooks/mutations/useBrewingMutations'
 import { errorMessage } from '@/lib/errorMessages'
-import NoData from '@/sharedComponents/NoData'
-import TextAction from '@/sharedComponents/TextAction'
 
 export type IngredientsCardProps = { characterId: string; ingredients: Ingredient[] }
 
@@ -29,69 +30,64 @@ export default function IngredientsCard({ characterId, ingredients }: Ingredient
     update.mutate({ id: ingredient.id, input: { qty: Math.max(0, qty) } })
 
   return (
-    <Paper variant="section" component="section" aria-label="Ingredient stock">
-      <CardHeader title="Ingredient Stock">
-        <TextAction onClick={() => setAdding(!adding)} aria-expanded={adding}>
-          + add
-        </TextAction>
-      </CardHeader>
-
+    <Section
+      title="Ingredient stock"
+      right={
+        <Button variant="text" onClick={() => setAdding(!adding)} aria-expanded={adding}>
+          {adding ? 'Cancel' : '+ Add ingredient'}
+        </Button>
+      }
+    >
       {adding ? (
         <AddIngredientForm characterId={characterId} onDone={() => setAdding(false)} />
       ) : null}
 
       {ingredients.length === 0 ? (
-        <NoData message="No ingredients in stock." />
+        <EmptyState>No ingredients in stock.</EmptyState>
       ) : (
-        <Box>
+        <AnimatePresence initial={false}>
           {ingredients.map((ingredient) => (
-            <Paper
-              key={ingredient.id}
-              variant="row"
-              sx={{ py: 0.75, display: 'flex', alignItems: 'center', gap: 1 }}
-            >
-              <Typography variant="h6" component="p" sx={{ flex: 1, minWidth: 0 }}>
-                {ingredient.name}{' '}
-                <Typography variant="caption" component="span">
-                  ({ingredient.rarity})
-                </Typography>
-              </Typography>
-              <TextAction onClick={() => remove.mutate(ingredient.id)} disabled={remove.isPending}>
-                Remove
-              </TextAction>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Button
-                  size="small"
-                  aria-label={`One fewer ${ingredient.name}`}
-                  disabled={ingredient.qty <= 0}
-                  onClick={() => setQty(ingredient, ingredient.qty - 1)}
-                  sx={{ width: 26, px: 0 }}
+            <MotionRow key={ingredient.id}>
+              <RuledRow key={ingredient.id} columns="minmax(0, 1fr) auto 120px 72px">
+                <Typography variant="body1">{ingredient.name}</Typography>
+                <Typography variant="capsXs">{ingredient.rarity}</Typography>
+                <Box
+                  sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2 }}
                 >
-                  −
-                </Button>
-                <Typography
-                  variant="h6"
-                  component="span"
-                  sx={{ minWidth: 24, textAlign: 'center' }}
-                >
-                  {ingredient.qty}
-                </Typography>
-                <Button
-                  size="small"
-                  aria-label={`One more ${ingredient.name}`}
-                  onClick={() => setQty(ingredient, ingredient.qty + 1)}
-                  sx={{ width: 26, px: 0 }}
-                >
-                  +
-                </Button>
-              </Box>
-            </Paper>
+                  <Button
+                    size="small"
+                    aria-label={`One fewer ${ingredient.name}`}
+                    disabled={ingredient.qty <= 0}
+                    onClick={() => setQty(ingredient, ingredient.qty - 1)}
+                  >
+                    −
+                  </Button>
+                  <Badge>{ingredient.qty}</Badge>
+                  <Button
+                    size="small"
+                    aria-label={`One more ${ingredient.name}`}
+                    onClick={() => setQty(ingredient, ingredient.qty + 1)}
+                  >
+                    +
+                  </Button>
+                </Box>
+                <Box data-row-actions>
+                  <Button
+                    variant="quiet"
+                    onClick={() => remove.mutate(ingredient.id)}
+                    disabled={remove.isPending}
+                  >
+                    Remove
+                  </Button>
+                </Box>
+              </RuledRow>
+            </MotionRow>
           ))}
-        </Box>
+        </AnimatePresence>
       )}
 
       {error ? <Alert severity="error">{errorMessage(error)}</Alert> : null}
-    </Paper>
+    </Section>
   )
 }
 
@@ -109,8 +105,12 @@ function AddIngredientForm({ characterId, onDone }: { characterId: string; onDon
   }
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'grid', gap: 1 }}>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{ display: 'grid', gap: 2, py: 4, borderBottom: 1, borderColor: 'ledger.line' }}
+    >
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
         <TextField
           size="small"
           placeholder="ingredient name"
@@ -121,7 +121,7 @@ function AddIngredientForm({ characterId, onDone }: { characterId: string; onDon
           sx={{ flex: 1, minWidth: 120 }}
         />
         <RaritySelect value={rarity} onChange={setRarity} />
-        <Button type="submit" size="small" disabled={!parsed.success || create.isPending}>
+        <Button type="submit" disabled={!parsed.success || create.isPending}>
           Add
         </Button>
       </Box>

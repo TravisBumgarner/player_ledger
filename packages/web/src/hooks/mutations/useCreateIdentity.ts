@@ -1,6 +1,6 @@
 import type { CreateCharacter, CreateUser } from '@awesomeness-mgmt/shared'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createCharacter, createUser } from '@/api/users'
+import { createCharacter, createUser, renameCharacter } from '@/api/users'
 import { ApiError } from '@/lib/ApiError'
 import { queryKeys } from '@/lib/queryKeys'
 
@@ -32,6 +32,24 @@ export function useCreateCharacter(userId: string) {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.characters(userId) })
+    },
+  })
+}
+
+export function useRenameCharacter(userId: string, characterId: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationKey: ['renameCharacter', characterId],
+    mutationFn: async (name: string) => {
+      const response = await renameCharacter(userId, characterId, { name })
+      if (!response.success) throw new ApiError(response.errorCode)
+      return response.data
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.characters(userId) })
+      // The party list and mentions carry the name too.
+      void queryClient.invalidateQueries({ queryKey: queryKeys.profiles(characterId) })
     },
   })
 }
