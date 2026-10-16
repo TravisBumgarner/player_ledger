@@ -54,7 +54,7 @@ export default function LoadFailure({ error, fallback, onRetry, dense = false }:
 
       {reason.canRetry && onRetry ? (
         <Button
-          variant={dense ? 'text' : 'contained'}
+          variant={dense ? 'text' : 'outlined'}
           size={dense ? 'small' : 'medium'}
           onClick={onRetry}
         >

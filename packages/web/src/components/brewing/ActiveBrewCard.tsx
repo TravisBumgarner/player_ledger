@@ -10,20 +10,18 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import LinearProgress from '@mui/material/LinearProgress'
 import MenuItem from '@mui/material/MenuItem'
-import Paper from '@mui/material/Paper'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { type FormEvent, useState } from 'react'
-import CardHeader from '@/components/brewing/CardHeader'
 import { parseWhole, percentOf } from '@/components/brewing/progress'
+import EmptyState from '@/components/ledger/EmptyState'
+import Section from '@/components/ledger/Section'
 import {
   useClearBrew,
   useLogBrewSession,
   useStartBrew,
 } from '@/hooks/mutations/useBrewingMutations'
 import { errorMessage } from '@/lib/errorMessages'
-import NoData from '@/sharedComponents/NoData'
-import TextAction from '@/sharedComponents/TextAction'
 
 export type ActiveBrewCardProps = {
   characterId: string
@@ -41,15 +39,16 @@ export default function ActiveBrewCard({ characterId, state, recipes }: ActiveBr
   const error = logSession.error ?? finish.error
 
   return (
-    <Paper variant="section" component="section" aria-label="Active brew">
-      <CardHeader title="Active Brew">
-        <TextAction onClick={() => setStartOpen(!startOpen)}>
-          {startOpen ? 'Cancel' : '+ Start New Brew'}
-        </TextAction>
-      </CardHeader>
-
+    <Section
+      title="Active brew"
+      right={
+        <Button variant="text" onClick={() => setStartOpen(!startOpen)} aria-expanded={startOpen}>
+          {startOpen ? 'Cancel' : '+ Start new brew'}
+        </Button>
+      }
+    >
       {startOpen ? (
-        <Box>
+        <Box sx={{ py: 4, borderBottom: 1, borderColor: 'ledger.line' }}>
           {known.length > 0 ? (
             <StartBrewForm
               characterId={characterId}
@@ -57,7 +56,7 @@ export default function ActiveBrewCard({ characterId, state, recipes }: ActiveBr
               onStarted={() => setStartOpen(false)}
             />
           ) : (
-            <Typography variant="body2" component="em">
+            <Typography variant="body1" data-empty="true">
               Mark a recipe as known below first.
             </Typography>
           )}
@@ -65,23 +64,31 @@ export default function ActiveBrewCard({ characterId, state, recipes }: ActiveBr
       ) : null}
 
       {brew ? (
-        <>
+        <Box
+          sx={{
+            display: 'grid',
+            gap: 2.5,
+            py: 4,
+            borderBottom: 1,
+            borderColor: 'ledger.line',
+          }}
+        >
           <Box
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'baseline',
               flexWrap: 'wrap',
-              gap: 1,
+              gap: 3,
             }}
           >
-            <Typography variant="h5" component="p">
-              {brew.name}{' '}
-              <Typography variant="caption" component="span">
-                ({brew.rarity})
+            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
+              <Typography variant="title" component="p">
+                {brew.name}
               </Typography>
-            </Typography>
-            <Typography variant="body1" component="p">
+              <Typography variant="capsXs">{brew.rarity}</Typography>
+            </Box>
+            <Typography variant="bodySm">
               {brew.hoursLogged} / {brew.hoursTotal} hrs · {brew.gold} gp invested
             </Typography>
           </Box>
@@ -92,33 +99,28 @@ export default function ActiveBrewCard({ characterId, state, recipes }: ActiveBr
             aria-label={`${brew.name} brewing progress`}
           />
 
-          <Box sx={{ display: 'flex', alignItems: 'baseline', flexWrap: 'wrap', gap: 2 }}>
-            <Button
-              size="small"
-              onClick={() => logSession.mutate()}
-              disabled={done || logSession.isPending}
-              sx={{ alignSelf: 'center' }}
-            >
+          <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 4 }}>
+            <Button onClick={() => logSession.mutate()} disabled={done || logSession.isPending}>
               Log a work session (+{BREW_SESSION_HOURS} hrs)
             </Button>
             {done ? (
               <>
-                <Typography variant="body2" component="p">
-                  Ready to bottle.
-                </Typography>
-                <TextAction onClick={() => finish.mutate()} disabled={finish.isPending}>
+                <Typography variant="bodySm">Ready to bottle.</Typography>
+                <Button variant="text" onClick={() => finish.mutate()} disabled={finish.isPending}>
                   Finish brew
-                </TextAction>
+                </Button>
               </>
             ) : null}
           </Box>
-        </>
+        </Box>
       ) : (
-        <NoData message="Nothing is brewing. Start a new brew to track its hours and the gold sunk into it." />
+        <EmptyState>
+          Nothing is brewing. Start one to track its hours and the gold sunk into it.
+        </EmptyState>
       )}
 
       {error ? <Alert severity="error">{errorMessage(error)}</Alert> : null}
-    </Paper>
+    </Section>
   )
 }
 
@@ -169,8 +171,8 @@ function StartBrewForm({ characterId, known, onStarted }: StartBrewFormProps) {
       />
       {start.isError ? <Alert severity="error">{errorMessage(start.error)}</Alert> : null}
       <Box>
-        <Button type="submit" variant="contained" disabled={!parsed.success || start.isPending}>
-          Begin Brewing
+        <Button type="submit" variant="accent" disabled={!parsed.success || start.isPending}>
+          Begin brewing
         </Button>
       </Box>
     </Box>

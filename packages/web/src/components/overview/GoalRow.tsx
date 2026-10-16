@@ -1,9 +1,10 @@
 import type { Goal } from '@awesomeness-mgmt/shared'
+import CloseIcon from '@mui/icons-material/Close'
 import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
-import FormControlLabel from '@mui/material/FormControlLabel'
+import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import TextAction from '@/sharedComponents/TextAction'
+import RuledRow from '@/components/ledger/RuledRow'
 
 export type GoalRowProps = {
   goal: Goal
@@ -13,26 +14,23 @@ export type GoalRowProps = {
 }
 
 export default function GoalRow({ goal, onToggle, onRemove, disabled }: GoalRowProps) {
+  const id = `goal-${goal.id}`
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-      <FormControlLabel
-        sx={{ flex: 1, minWidth: 0, mr: 0, ml: '-9px' }}
-        control={
-          <Checkbox
-            size="small"
-            checked={goal.done}
-            onChange={(event) => onToggle(event.target.checked)}
-          />
-        }
-        label={
-          <Typography variant="body1" component="span" data-done={goal.done}>
-            {goal.text}
-          </Typography>
-        }
+    <RuledRow columns="28px minmax(0, 1fr) 36px">
+      <Checkbox
+        id={id}
+        checked={goal.done}
+        onChange={(event) => onToggle(event.target.checked)}
+        sx={{ p: 0 }}
       />
-      <TextAction onClick={onRemove} disabled={disabled}>
-        Remove
-      </TextAction>
-    </Box>
+      <Typography variant="body1" component="label" htmlFor={id} data-done={goal.done}>
+        {goal.text}
+      </Typography>
+      <Box data-row-actions>
+        <IconButton aria-label={`Remove ${goal.text}`} onClick={onRemove} disabled={disabled}>
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </Box>
+    </RuledRow>
   )
 }

@@ -22,3 +22,6 @@ export type Character = z.infer<typeof characterSchema>
 export const createCharacterSchema = z.object({ name: nameSchema })
 
 export type CreateCharacter = z.infer<typeof createCharacterSchema>
+
+export const renameCharacterSchema = createCharacterSchema
+export type RenameCharacter = CreateCharacter

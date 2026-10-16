@@ -86,7 +86,6 @@ export const spells = sqliteTable(
     slotsTotal: integer('slots_total').notNull().default(0),
     slotsUsed: integer('slots_used').notNull().default(0),
     resetOn: text('reset_on', { enum: SPELL_RESET_ON }).notNull().default('long'),
-    pinned: bool('pinned'),
     createdAt: createdAt(),
   },
   (table) => [index('spells_character_idx').on(table.characterId, table.createdAt)],
@@ -102,7 +101,6 @@ export const inventoryItems = sqliteTable(
     type: text('type', { enum: ITEM_TYPES }).notNull(),
     category: text('category', { enum: ITEM_CATEGORIES }).notNull(),
     name: text('name').notNull(),
-    pinned: bool('pinned'),
     used: bool('used'),
     qtyTag: text('qty_tag').notNull().default(''),
     trackedDndBeyond: bool('tracked_dnd_beyond'),
@@ -194,6 +192,19 @@ export const goals = sqliteTable(
 )
 
 export type GoalRow = typeof goals.$inferSelect
+
+export const modifiers = sqliteTable(
+  'modifiers',
+  {
+    id: id(),
+    characterId: characterId(),
+    text: text('text').notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [index('modifiers_character_idx').on(table.characterId, table.createdAt)],
+)
+
+export type ModifierRow = typeof modifiers.$inferSelect
 
 /** One row per character, created on first save. */
 export const characterDevelopment = sqliteTable('character_development', {

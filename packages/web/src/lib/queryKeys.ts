@@ -15,8 +15,8 @@ export const queryKeys = {
   recipes: (characterId: string) => ['ledger', characterId, 'recipes'] as const,
   ingredients: (characterId: string) => ['ledger', characterId, 'ingredients'] as const,
   goals: (characterId: string) => ['ledger', characterId, 'goals'] as const,
+  modifiers: (characterId: string) => ['ledger', characterId, 'modifiers'] as const,
   notes: (characterId: string, kind: NoteKind) => ['ledger', characterId, 'notes', kind] as const,
-  development: (characterId: string) => ['ledger', characterId, 'development'] as const,
   profiles: (characterId: string) => ['ledger', characterId, 'profiles'] as const,
   backlinks: (characterId: string, ref: string) =>
     ['ledger', characterId, 'profiles', ref, 'backlinks'] as const,

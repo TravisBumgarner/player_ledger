@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
+import BracketPanel from '@/components/ledger/BracketPanel'
 
 export type ErrorScreenProps = {
   /** The whole of what happened, in three or four words. */
@@ -18,32 +18,24 @@ export default function ErrorScreen({ title, detail, action }: ErrorScreenProps)
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        p: 3,
-        backgroundColor: 'background.default',
+        p: 6,
+        bgcolor: 'background.default',
       }}
     >
-      <Paper
-        variant="panel"
+      <BracketPanel
         role="alert"
-        sx={{
-          maxWidth: 420,
-          width: '100%',
-          p: '20px 22px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-        }}
+        sx={{ maxWidth: 420, width: '100%', display: 'flex', flexDirection: 'column', gap: 3 }}
       >
-        <Typography variant="h4" component="h1">
+        <Typography variant="title" component="h1">
           {title}
         </Typography>
-        <Typography variant="body2">{detail}</Typography>
+        <Typography variant="body1">{detail}</Typography>
         {action && (
-          <Button variant="contained" onClick={action.onAction} sx={{ alignSelf: 'flex-start' }}>
+          <Button onClick={action.onAction} sx={{ alignSelf: 'flex-start' }}>
             {action.label}
           </Button>
         )}
-      </Paper>
+      </BracketPanel>
     </Box>
   )
 }

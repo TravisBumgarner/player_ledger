@@ -1,21 +1,23 @@
 import type {
-  CharacterDevelopment,
   CreateGoal,
+  CreateModifier,
   CreateSessionNote,
   Goal,
+  Modifier,
   NoteKind,
-  RichDoc,
   SessionNote,
   UpdateSessionNote,
 } from '@awesomeness-mgmt/shared'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   createGoal,
+  createModifier,
   createNote,
   deleteGoal,
+  deleteModifier,
   deleteNote,
-  saveCharacterDevelopment,
   updateGoal,
+  updateModifier,
   updateNote,
 } from '@/api/journal'
 import { ApiError } from '@/lib/ApiError'
@@ -84,6 +86,69 @@ export function useDeleteGoal(characterId: string) {
   })
 }
 
+export function useCreateModifier(characterId: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationKey: ['createModifier', characterId],
+    mutationFn: async (input: CreateModifier) => {
+      const response = await createModifier(characterId, input)
+      if (!response.success) throw new ApiError(response.errorCode)
+      return response.data
+    },
+    onSuccess: (modifier) => {
+      queryClient.setQueryData<Modifier[]>(queryKeys.modifiers(characterId), (rows) =>
+        rows ? [...rows, modifier] : rows,
+      )
+      void queryClient.invalidateQueries({ queryKey: queryKeys.modifiers(characterId) })
+    },
+  })
+}
+
+export function useRenameModifier(characterId: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationKey: ['renameModifier', characterId],
+    mutationFn: async ({ modifierId, text }: { modifierId: string; text: string }) => {
+      const response = await updateModifier(characterId, modifierId, { text })
+      if (!response.success) throw new ApiError(response.errorCode)
+      return response.data
+    },
+    // Renamed on commit, or the old title flashes back while the request is out.
+    onMutate: ({ modifierId, text }) => {
+      void queryClient.cancelQueries({ queryKey: queryKeys.modifiers(characterId) })
+      queryClient.setQueryData<Modifier[]>(queryKeys.modifiers(characterId), (rows) =>
+        rows?.map((row) => (row.id === modifierId ? { ...row, text } : row)),
+      )
+    },
+    onSuccess: (modifier) => {
+      queryClient.setQueryData<Modifier[]>(queryKeys.modifiers(characterId), (rows) =>
+        rows?.map((row) => (row.id === modifier.id ? modifier : row)),
+      )
+    },
+    onError: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.modifiers(characterId) })
+    },
+  })
+}
+
+export function useDeleteModifier(characterId: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationKey: ['deleteModifier', characterId],
+    mutationFn: async (modifierId: string) => {
+      const response = await deleteModifier(characterId, modifierId)
+      if (!response.success) throw new ApiError(response.errorCode)
+      return response.data
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.modifiers(characterId) })
+    },
+  })
+}
+
 export function useCreateNote(characterId: string, kind: NoteKind) {
   const queryClient = useQueryClient()
 
@@ -110,6 +175,8 @@ export function useUpdateNote(characterId: string, kind: NoteKind) {
 
   return useMutation({
     mutationKey: ['updateNote', characterId, kind],
+    // Autosave fires often; queued, an older body can never land after a newer one.
+    scope: { id: `updateNote:${characterId}:${kind}` },
     mutationFn: async ({ noteId, input }: { noteId: string; input: UpdateSessionNote }) => {
       const response = await updateNote(characterId, kind, noteId, input)
       if (!response.success) throw new ApiError(response.errorCode)
@@ -137,26 +204,6 @@ export function useDeleteNote(characterId: string, kind: NoteKind) {
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.notes(characterId, kind) })
       // Mentions live in note bodies, so backlinks move with them.
-      void queryClient.invalidateQueries({ queryKey: queryKeys.profiles(characterId) })
-    },
-  })
-}
-
-export function useSaveCharacterDevelopment(characterId: string) {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationKey: ['saveCharacterDevelopment', characterId],
-    mutationFn: async (body: RichDoc) => {
-      const response = await saveCharacterDevelopment(characterId, { body })
-      if (!response.success) throw new ApiError(response.errorCode)
-      return response.data
-    },
-    onSuccess: (development) => {
-      queryClient.setQueryData<CharacterDevelopment>(
-        queryKeys.development(characterId),
-        development,
-      )
       void queryClient.invalidateQueries({ queryKey: queryKeys.profiles(characterId) })
     },
   })

@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import AppThemeProvider from '@/styles/Theme'
+import AppThemeProvider from '@/theme'
 
 /**
  * The provider stack a component needs when it is rendered outside App.tsx's

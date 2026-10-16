@@ -1,11 +1,14 @@
 import type { Backlink } from '@awesomeness-mgmt/shared'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import Box from '@mui/material/Box'
-import List from '@mui/material/List'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemText from '@mui/material/ListItemText'
+import ButtonBase from '@mui/material/ButtonBase'
 import Typography from '@mui/material/Typography'
 import { useNavigate } from 'react-router-dom'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
+import Badge from '@/components/ledger/Badge'
+import EmptyState from '@/components/ledger/EmptyState'
+import RuledRow from '@/components/ledger/RuledRow'
+import SectionHeader from '@/components/ledger/SectionHeader'
 import { useBacklinks } from '@/hooks/queries/useProfiles'
 import { ROUTES } from '@/lib/routes'
 import LoadFailure from '@/sharedComponents/LoadFailure'
@@ -14,14 +17,16 @@ import Loading from '@/sharedComponents/Loading'
 const SOURCE_LABELS: Record<Backlink['source'], string> = {
   sessionNote: 'Session note',
   brewingNote: 'Brewing note',
+  graftingNote: 'Grafting note',
   profile: 'Character notes',
-  development: 'Overview',
+  development: 'Character development',
 }
 
 const SOURCE_ROUTES: Record<Exclude<Backlink['source'], 'profile'>, string> = {
   sessionNote: ROUTES.sessionNotes,
   brewingNote: ROUTES.brewing,
-  development: ROUTES.overview,
+  graftingNote: ROUTES.grafting,
+  development: ROUTES.development,
 }
 
 export type ProfileBacklinksProps = {
@@ -36,10 +41,11 @@ export default function ProfileBacklinks({ profileRef, onOpenProfile }: ProfileB
   const navigate = useNavigate()
 
   return (
-    <Box component="section" aria-label="Mentioned in" sx={{ display: 'grid', gap: 0.5 }}>
-      <Typography variant="overline" component="h3">
-        Mentioned in
-      </Typography>
+    <Box component="section" aria-label="Mentioned in">
+      <SectionHeader
+        title="Mentioned in"
+        right={backlinks.data?.length ? <Badge>{backlinks.data.length}</Badge> : null}
+      />
 
       {backlinks.isPending ? (
         <Loading size={20} label="Loading mentions" />
@@ -51,24 +57,34 @@ export default function ProfileBacklinks({ profileRef, onOpenProfile }: ProfileB
           onRetry={() => void backlinks.refetch()}
         />
       ) : backlinks.data.length === 0 ? (
-        <Typography variant="body2" data-empty="true">
-          Not mentioned anywhere yet.
-        </Typography>
+        <EmptyState>Not mentioned anywhere yet.</EmptyState>
       ) : (
-        <List disablePadding>
-          {backlinks.data.map((link) => (
-            <ListItemButton
-              key={`${link.source}:${link.id}`}
+        backlinks.data.map((link) => (
+          <RuledRow key={`${link.source}:${link.id}`} columns="minmax(0, 1fr)">
+            <ButtonBase
               onClick={() => {
                 if (link.source === 'profile') onOpenProfile(link.id)
                 else navigate(SOURCE_ROUTES[link.source])
               }}
-              sx={{ px: 1, mx: -1 }}
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'minmax(0, 1fr) auto',
+                alignItems: 'center',
+                columnGap: 2,
+                py: 2,
+                textAlign: 'left',
+              }}
             >
-              <ListItemText primary={link.title} secondary={SOURCE_LABELS[link.source]} />
-            </ListItemButton>
-          ))}
-        </List>
+              <Box sx={{ display: 'grid', gap: 0.5, minWidth: 0 }}>
+                <Typography variant="bodySm" noWrap>
+                  {link.title}
+                </Typography>
+                <Typography variant="capsXs">{SOURCE_LABELS[link.source]}</Typography>
+              </Box>
+              <ChevronRightIcon fontSize="small" color="action" />
+            </ButtonBase>
+          </RuledRow>
+        ))
       )}
     </Box>
   )

@@ -5,6 +5,7 @@ import cors from 'cors'
 import express, { type ErrorRequestHandler } from 'express'
 import helmet from 'helmet'
 import config from './config.js'
+import backupRouter from './routes/backup.js'
 import charactersRouter from './routes/characters/index.js'
 import healthRouter from './routes/health.js'
 import { sendError } from './routes/shared/responses.js'
@@ -35,7 +36,7 @@ app.use(
         baseUri: ["'self'"],
         formAction: ["'self'"],
         // Otherwise every asset URL on http://localhost is rewritten to https.
-        upgradeInsecureRequests: config.isProduction ? [] : null,
+        upgradeInsecureRequests: config.isProduction && !config.isDesktop ? [] : null,
       },
     },
     crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -54,6 +55,7 @@ app.use(express.json({ limit: '1mb' }))
 
 app.use('/api/characters/:characterId', charactersRouter)
 app.use('/api/users', usersRouter)
+app.use('/api/backup', backupRouter)
 
 app.use('/api', (_req, res) => {
   sendError(res, 'NOT_FOUND', 404)

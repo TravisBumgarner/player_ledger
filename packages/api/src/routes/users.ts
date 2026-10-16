@@ -1,4 +1,8 @@
-import { createCharacterSchema, createUserSchema } from '@awesomeness-mgmt/shared'
+import {
+  createCharacterSchema,
+  createUserSchema,
+  renameCharacterSchema,
+} from '@awesomeness-mgmt/shared'
 import { type Request, type Response, Router } from 'express'
 import {
   findOrCreateCharacter,
@@ -6,6 +10,7 @@ import {
   findUser,
   listCharacters,
   listUsers,
+  renameCharacter,
   toCharacter,
   toUser,
 } from '../db/queries/users.js'
@@ -46,9 +51,23 @@ async function postCharacter(req: Request<{ userId: string }>, res: Response): P
   sendSuccess(res, toCharacter(await findOrCreateCharacter(user.id, parsed.data.name)))
 }
 
+async function patchCharacter(
+  req: Request<{ userId: string; characterId: string }>,
+  res: Response,
+): Promise<void> {
+  const parsed = renameCharacterSchema.safeParse(req.body)
+  if (!parsed.success) return sendError(res, 'INVALID_INPUT', 400)
+
+  const row = await renameCharacter(req.params.userId, req.params.characterId, parsed.data.name)
+  if (row === null) return sendError(res, 'INVALID_INPUT', 400)
+  if (!row) return sendError(res, 'NOT_FOUND', 404)
+  sendSuccess(res, toCharacter(row))
+}
+
 router.get('/', getUsers)
 router.post('/', postUser)
 router.get('/:userId/characters', getCharacters)
 router.post('/:userId/characters', postCharacter)
+router.patch('/:userId/characters/:characterId', patchCharacter)
 
 export default router

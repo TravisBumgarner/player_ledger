@@ -67,12 +67,18 @@ export function profileImagePath(characterId: string, profile: CharacterProfile)
 }
 
 /** A note that @mentions a character. */
-export const BACKLINK_SOURCES = ['sessionNote', 'brewingNote', 'profile', 'development'] as const
+export const BACKLINK_SOURCES = [
+  'sessionNote',
+  'brewingNote',
+  'graftingNote',
+  'profile',
+  'development',
+] as const
 export const backlinkSchema = z.object({
   source: z.enum(BACKLINK_SOURCES),
-  /** The note's id, the mentioning profile's ref, or the ledger's own character id for development. */
+  /** The note's id, or the mentioning profile's ref. */
   id: z.string(),
-  /** The note's date/label, the mentioning character's name, or "Character development". */
+  /** The note's date/label, or the mentioning character's name. */
   title: z.string(),
   createdAt: z.string(),
 })

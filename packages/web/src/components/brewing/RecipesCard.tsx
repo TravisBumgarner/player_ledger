@@ -4,19 +4,19 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Checkbox from '@mui/material/Checkbox'
 import MenuItem from '@mui/material/MenuItem'
-import Paper from '@mui/material/Paper'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { type FormEvent, useState } from 'react'
-import CardHeader from '@/components/brewing/CardHeader'
+import EmptyState from '@/components/ledger/EmptyState'
+import { AnimatePresence, MotionRow } from '@/components/ledger/motion'
+import RuledRow from '@/components/ledger/RuledRow'
+import Section from '@/components/ledger/Section'
 import {
   useCreateRecipe,
   useDeleteRecipe,
   useUpdateRecipe,
 } from '@/hooks/mutations/useBrewingMutations'
 import { errorMessage } from '@/lib/errorMessages'
-import NoData from '@/sharedComponents/NoData'
-import TextAction from '@/sharedComponents/TextAction'
 
 export type RecipesCardProps = { characterId: string; recipes: Recipe[] }
 
@@ -27,60 +27,62 @@ export default function RecipesCard({ characterId, recipes }: RecipesCardProps) 
   const error = update.error ?? remove.error
 
   return (
-    <Paper variant="section" component="section" aria-label="Recipes known">
-      <CardHeader title="Recipes Known">
-        <TextAction onClick={() => setAdding(!adding)} aria-expanded={adding}>
-          + add
-        </TextAction>
-      </CardHeader>
-
+    <Section
+      title="Recipes known"
+      right={
+        <Button variant="text" onClick={() => setAdding(!adding)} aria-expanded={adding}>
+          {adding ? 'Cancel' : '+ Add recipe'}
+        </Button>
+      }
+    >
       {adding ? <AddRecipeForm characterId={characterId} onDone={() => setAdding(false)} /> : null}
 
       {recipes.length === 0 ? (
-        <NoData message="No recipes yet." />
+        <EmptyState>No recipes yet.</EmptyState>
       ) : (
-        <Box>
+        <AnimatePresence initial={false}>
           {recipes.map((recipe) => (
-            <Paper key={recipe.id} variant="row" sx={{ py: 0.75 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <MotionRow key={recipe.id}>
+              <RuledRow key={recipe.id} columns="28px minmax(0, 1fr) auto 72px" sx={{ py: 2 }}>
                 <Checkbox
-                  size="small"
                   checked={recipe.known}
                   onChange={(event) =>
                     update.mutate({ id: recipe.id, input: { known: event.target.checked } })
                   }
                   slotProps={{ input: { 'aria-label': `${recipe.name} is known` } }}
-                  sx={{ p: 0.5, ml: -0.5 }}
+                  sx={{ p: 0 }}
                 />
-                <Typography variant="h6" component="p" sx={{ flex: 1, minWidth: 0 }}>
-                  {recipe.name}
-                </Typography>
-                <Typography variant="caption" component="span">
-                  {recipe.rarity}
-                </Typography>
-                <TextAction onClick={() => remove.mutate(recipe.id)} disabled={remove.isPending}>
-                  Remove
-                </TextAction>
-              </Box>
-              <Box sx={{ pl: 4, display: 'grid', gap: 0.25 }}>
-                {recipe.ingredients ? (
-                  <Typography variant="body2" component="p">
-                    Ingredients: {recipe.ingredients}
-                  </Typography>
-                ) : null}
-                {recipe.description ? (
-                  <Typography variant="body2" component="p">
-                    <em>{recipe.description}</em>
-                  </Typography>
-                ) : null}
-              </Box>
-            </Paper>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography variant="body1">{recipe.name}</Typography>
+                  {recipe.ingredients ? (
+                    <Typography variant="caption" component="p">
+                      Ingredients: {recipe.ingredients}
+                    </Typography>
+                  ) : null}
+                  {recipe.description ? (
+                    <Typography variant="bodySm" sx={{ fontStyle: 'italic' }}>
+                      {recipe.description}
+                    </Typography>
+                  ) : null}
+                </Box>
+                <Typography variant="capsXs">{recipe.rarity}</Typography>
+                <Box data-row-actions>
+                  <Button
+                    variant="quiet"
+                    onClick={() => remove.mutate(recipe.id)}
+                    disabled={remove.isPending}
+                  >
+                    Remove
+                  </Button>
+                </Box>
+              </RuledRow>
+            </MotionRow>
           ))}
-        </Box>
+        </AnimatePresence>
       )}
 
       {error ? <Alert severity="error">{errorMessage(error)}</Alert> : null}
-    </Paper>
+    </Section>
   )
 }
 
@@ -105,8 +107,12 @@ function AddRecipeForm({ characterId, onDone }: { characterId: string; onDone: (
   }
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'grid', gap: 1 }}>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{ display: 'grid', gap: 2, py: 4, borderBottom: 1, borderColor: 'ledger.line' }}
+    >
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
         <TextField
           size="small"
           placeholder="recipe name"
@@ -136,7 +142,7 @@ function AddRecipeForm({ characterId, onDone }: { characterId: string; onDone: (
       />
       {create.isError ? <Alert severity="error">{errorMessage(create.error)}</Alert> : null}
       <Box>
-        <Button type="submit" size="small" disabled={!parsed.success || create.isPending}>
+        <Button type="submit" disabled={!parsed.success || create.isPending}>
           Add
         </Button>
       </Box>

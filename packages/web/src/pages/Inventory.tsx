@@ -1,11 +1,11 @@
 import { type InventoryItem, ITEM_CATEGORIES } from '@awesomeness-mgmt/shared'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
 import ItemCategoryTable from '@/components/inventory/ItemCategoryTable'
 import ItemFormDialog from '@/components/inventory/ItemFormDialog'
+import Page from '@/components/ledger/Page'
 import { useInventory } from '@/hooks/queries/useInventory'
 import LoadFailure from '@/sharedComponents/LoadFailure'
 import Loading from '@/sharedComponents/Loading'
@@ -19,17 +19,11 @@ export default function Inventory() {
   const [dialog, setDialog] = useState<DialogState>({ open: false, item: null })
 
   return (
-    <Box sx={{ display: 'grid', gap: '20px' }}>
-      <Box sx={{ display: 'grid', gap: '4px' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button variant="contained" onClick={() => setDialog({ open: true, item: null })}>
-            + Add Item
-          </Button>
-        </Box>
-        <Typography variant="body1" color="text.secondary">
-          Gear and consumables not tracked elsewhere — pick a type when adding to get the right
-          fields.
-        </Typography>
+    <Page>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Button variant="text" onClick={() => setDialog({ open: true, item: null })}>
+          + Add item
+        </Button>
       </Box>
 
       {inventory.isPending ? (
@@ -56,6 +50,6 @@ export default function Inventory() {
         item={dialog.item}
         onClose={() => setDialog((current) => ({ ...current, open: false }))}
       />
-    </Box>
+    </Page>
   )
 }

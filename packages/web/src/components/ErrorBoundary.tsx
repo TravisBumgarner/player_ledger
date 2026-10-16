@@ -1,7 +1,7 @@
 import { log } from '@awesomeness-mgmt/shared'
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import ErrorScreen from '@/components/ErrorScreen'
-import AppThemeProvider from '@/styles/Theme'
+import AppThemeProvider from '@/theme'
 
 type Props = { children: ReactNode }
 type State = { hasError: boolean }

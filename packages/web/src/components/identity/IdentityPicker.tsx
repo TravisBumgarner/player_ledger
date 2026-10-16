@@ -1,22 +1,19 @@
 import { createUserSchema } from '@awesomeness-mgmt/shared'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import List from '@mui/material/List'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemText from '@mui/material/ListItemText'
-import Paper from '@mui/material/Paper'
-import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import { type FormEvent, type ReactNode, useState } from 'react'
+import type { KeyboardEvent, ReactNode } from 'react'
+import AddRow from '@/components/ledger/AddRow'
+import Diamond from '@/components/ledger/Diamond'
+import RuledRow from '@/components/ledger/RuledRow'
+import Section from '@/components/ledger/Section'
 import { errorMessage } from '@/lib/errorMessages'
-import SectionLabel from '@/sharedComponents/SectionLabel'
 
 type Named = { id: string; name: string }
 
 export type IdentityPickerProps = {
   heading: string
   fieldLabel: string
-  existingLabel: string
   existing: Named[]
   selectedId: string | null
   onPick: (id: string) => void
@@ -27,11 +24,10 @@ export type IdentityPickerProps = {
   footer?: ReactNode
 }
 
-/** One step of "who are you": type a name, or pick one somebody already typed. */
+/** One step of "who are you": pick a name somebody already typed, or add one. */
 export default function IdentityPicker({
   heading,
   fieldLabel,
-  existingLabel,
   existing,
   selectedId,
   onPick,
@@ -40,67 +36,48 @@ export default function IdentityPicker({
   createError,
   footer,
 }: IdentityPickerProps) {
-  const [name, setName] = useState('')
-
-  // Users and characters share the same name rule.
-  const parsed = createUserSchema.safeParse({ name })
-  const tooLong = name.trim().length > 0 && !parsed.success
-
-  function handleSubmit(event: FormEvent) {
+  function pickOnKey(event: KeyboardEvent, id: string) {
+    if (event.key !== 'Enter' && event.key !== ' ') return
     event.preventDefault()
-    if (!parsed.success) return
-    void onCreate(parsed.data.name).then((row) => onPick(row.id))
+    onPick(id)
   }
 
-  const helperText = tooLong
-    ? 'Keep it under 80 characters.'
-    : createError
-      ? errorMessage(createError)
-      : ' '
-
   return (
-    <Box sx={{ display: 'grid', gap: 2, maxWidth: 480, width: '100%', mx: 'auto' }}>
-      <Typography variant="h1">{heading}</Typography>
-
-      <Paper variant="section" component="form" onSubmit={handleSubmit}>
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
-          <TextField
-            label={fieldLabel}
-            size="small"
-            fullWidth
-            required
-            autoFocus
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            error={tooLong || Boolean(createError)}
-            helperText={helperText}
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={!parsed.success || isCreating}
-            sx={{ flex: 'none', mt: '2px' }}
+    <Box sx={{ display: 'grid', gap: 4, maxWidth: 480, mx: 'auto', pt: 10 }}>
+      <Section title={heading}>
+        {existing.map((row) => (
+          <RuledRow
+            key={row.id}
+            columns="28px minmax(0, 1fr) 36px"
+            role="button"
+            tabIndex={0}
+            onClick={() => onPick(row.id)}
+            onKeyDown={(event) => pickOnKey(event, row.id)}
+            sx={{ cursor: 'pointer', '&:hover': { color: 'ledger.accent' } }}
           >
-            {isCreating ? 'Saving…' : 'Continue'}
-          </Button>
-        </Box>
-      </Paper>
+            <Diamond filled={row.id === selectedId} />
+            <Typography variant="body1">{row.name}</Typography>
+            <ChevronRightIcon fontSize="small" sx={{ color: 'ledger.muted' }} />
+          </RuledRow>
+        ))}
+        <AddRow
+          placeholder={`${fieldLabel}…`}
+          label={fieldLabel}
+          maxLength={80}
+          disabled={isCreating}
+          onAdd={async (text) => {
+            // Users and characters share the same name rule.
+            const parsed = createUserSchema.safeParse({ name: text })
+            if (!parsed.success) return
+            onPick((await onCreate(parsed.data.name)).id)
+          }}
+        />
+      </Section>
 
-      {existing.length > 0 ? (
-        <Paper variant="panel">
-          <SectionLabel>{existingLabel}</SectionLabel>
-          <List disablePadding>
-            {existing.map((row) => (
-              <ListItemButton
-                key={row.id}
-                selected={row.id === selectedId}
-                onClick={() => onPick(row.id)}
-              >
-                <ListItemText primary={row.name} />
-              </ListItemButton>
-            ))}
-          </List>
-        </Paper>
+      {createError ? (
+        <Typography variant="caption" role="alert" sx={{ color: 'error.main' }}>
+          {errorMessage(createError)}
+        </Typography>
       ) : null}
 
       {footer}

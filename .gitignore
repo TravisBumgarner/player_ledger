@@ -24,3 +24,6 @@ packages/api/data/
 
 # Scratch worktrees the agent tooling creates.
 .claude/worktrees/
+
+# Packaged Electron builds.
+packages/desktop/release/

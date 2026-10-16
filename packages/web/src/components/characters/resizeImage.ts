@@ -1,16 +1,18 @@
 import { PROFILE_IMAGE_EDGE } from '@awesomeness-mgmt/shared'
 
-/** Scales down to `PROFILE_IMAGE_EDGE` on the longest side, keeping the aspect ratio. */
-export async function resizeImage(file: Blob): Promise<Blob> {
+export type CropArea = { x: number; y: number; width: number; height: number }
+
+/** Cuts `area` (source pixels) out of `file` as a square, at most `PROFILE_IMAGE_EDGE` on a side. */
+export async function cropImage(file: Blob, area: CropArea): Promise<Blob> {
   const bitmap = await createImageBitmap(file)
-  const scale = Math.min(1, PROFILE_IMAGE_EDGE / Math.max(bitmap.width, bitmap.height))
+  const edge = Math.max(1, Math.min(PROFILE_IMAGE_EDGE, Math.round(area.width)))
   const canvas = document.createElement('canvas')
-  canvas.width = Math.max(1, Math.round(bitmap.width * scale))
-  canvas.height = Math.max(1, Math.round(bitmap.height * scale))
+  canvas.width = edge
+  canvas.height = edge
 
   const context = canvas.getContext('2d')
   if (!context) throw new Error('Canvas 2D context unavailable')
-  context.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+  context.drawImage(bitmap, area.x, area.y, area.width, area.height, 0, 0, edge, edge)
   bitmap.close()
 
   // A browser that cannot encode WebP (Safari) hands back a PNG, and `blob.type` says so.

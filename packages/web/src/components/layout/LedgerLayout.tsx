@@ -1,62 +1,68 @@
 import Box from '@mui/material/Box'
-import { useTheme } from '@mui/material/styles'
-import Tab from '@mui/material/Tab'
-import Tabs from '@mui/material/Tabs'
-import useMediaQuery from '@mui/material/useMediaQuery'
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { useLocation, useOutlet } from 'react-router-dom'
 import AppShell from '@/components/AppShell'
 import CharacterPanel from '@/components/characters/CharacterPanel'
+import ProfilePortraitEditor from '@/components/characters/ProfilePortraitEditor'
+import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
+import { AnimatePresence, motion } from '@/components/ledger/motion'
+import Portrait from '@/components/ledger/Portrait'
+import SideNav from '@/components/ledger/SideNav'
 import RestToolbar from '@/components/rest/RestToolbar'
-import { LEDGER_TABS } from '@/lib/routes'
-import { LEDGER_CONTENT_WIDTH, SIDEBAR_WIDTH } from '@/styles/styleConsts'
+import { useProfiles } from '@/hooks/queries/useProfiles'
+import { profileImageUrl } from '@/sharedComponents/ProfileImage'
+import { LAYOUT } from '@/theme/tokens'
 
 export default function LedgerLayout() {
+  const { character } = useActiveCharacter()
+  const profiles = useProfiles(character.id)
+  const own = profiles.data?.find((profile) => profile.ref === `pc:${character.id}`)
   const { pathname } = useLocation()
-  const theme = useTheme()
-  // Below this the sidebar would squeeze the tables, so it becomes a row of tabs.
-  const stacked = useMediaQuery(theme.breakpoints.down('sm'))
-  const active = LEDGER_TABS.find((tab) => pathname.startsWith(tab.path))?.path ?? false
+  // Captured per render, so the leaving page keeps showing itself while it fades out.
+  const outlet = useOutlet()
 
   return (
-    <AppShell wide>
-      <RestToolbar />
-
+    <AppShell ledger headerActions={<RestToolbar />}>
       <Box
+        component="aside"
         sx={{
-          flex: 1,
+          width: LAYOUT.sidebarWidth,
+          flex: 'none',
+          boxSizing: 'border-box',
+          px: 4,
+          py: 5,
+          borderRight: 1,
+          borderColor: 'ledger.line',
           display: 'flex',
-          flexDirection: stacked ? 'column' : 'row',
-          minHeight: 0,
+          flexDirection: 'column',
+          gap: 5,
+          overflowY: 'auto',
         }}
       >
-        <Tabs
-          component="nav"
-          aria-label="Ledger sections"
-          orientation={stacked ? 'horizontal' : 'vertical'}
-          variant={stacked ? 'scrollable' : 'standard'}
-          value={active}
-          sx={stacked ? undefined : { width: SIDEBAR_WIDTH, flex: 'none', pt: 2 }}
-        >
-          {LEDGER_TABS.map((tab) => (
-            <Tab key={tab.path} value={tab.path} label={tab.label} component={Link} to={tab.path} />
-          ))}
-        </Tabs>
-
-        <Box
-          component="section"
-          sx={{
-            flex: 1,
-            minWidth: 0,
-            px: { xs: 2, sm: 4.5 },
-            py: { xs: 2, sm: 3.5 },
-            maxWidth: LEDGER_CONTENT_WIDTH,
-          }}
-        >
-          <Outlet />
-        </Box>
-
-        <CharacterPanel />
+        <Portrait
+          name={character.name}
+          title={own?.description ?? ''}
+          imageUrl={own ? profileImageUrl(character.id, own) : null}
+          editor={
+            own ? <ProfilePortraitEditor profile={own} size={LAYOUT.portrait.w} /> : undefined
+          }
+        />
+        <SideNav />
       </Box>
+
+      <Box sx={{ flex: 1, minWidth: 0, overflowY: 'auto', pt: 6, px: 8, pb: 12 }}>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+          >
+            {outlet}
+          </motion.div>
+        </AnimatePresence>
+      </Box>
+
+      <CharacterPanel />
     </AppShell>
   )
 }

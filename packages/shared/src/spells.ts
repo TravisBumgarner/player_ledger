@@ -16,7 +16,6 @@ export const spellSchema = z.object({
   slotsTotal: z.number().int(),
   slotsUsed: z.number().int(),
   resetOn: z.enum(SPELL_RESET_ON),
-  pinned: z.boolean(),
   createdAt: z.string(),
 })
 export type Spell = z.infer<typeof spellSchema>
@@ -32,7 +31,5 @@ export const createSpellSchema = z.object({
 })
 export type CreateSpell = z.infer<typeof createSpellSchema>
 
-export const updateSpellSchema = createSpellSchema
-  .extend({ pinned: z.boolean(), slotsUsed: count })
-  .partial()
+export const updateSpellSchema = createSpellSchema.extend({ slotsUsed: count }).partial()
 export type UpdateSpell = z.infer<typeof updateSpellSchema>

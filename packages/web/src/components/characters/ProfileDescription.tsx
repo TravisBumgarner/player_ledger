@@ -1,6 +1,6 @@
 import type { CharacterProfile } from '@awesomeness-mgmt/shared'
 import Box from '@mui/material/Box'
-import TextField from '@mui/material/TextField'
+import InputBase from '@mui/material/InputBase'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
@@ -8,7 +8,13 @@ import { useUpdateProfile } from '@/hooks/mutations/useProfileMutations'
 import { errorMessage } from '@/lib/errorMessages'
 
 /** Saves on blur or Enter: a one-liner with its own Save button is a form nobody asked for. */
-export default function ProfileDescription({ profile }: { profile: CharacterProfile }) {
+export default function ProfileDescription({
+  profile,
+  align = 'left',
+}: {
+  profile: CharacterProfile
+  align?: 'left' | 'center'
+}) {
   const { character } = useActiveCharacter()
   const update = useUpdateProfile(character.id)
   // Null while not editing, so an edit made elsewhere (the panel, the tab) shows up here.
@@ -22,12 +28,11 @@ export default function ProfileDescription({ profile }: { profile: CharacterProf
   }
 
   return (
-    <Box sx={{ display: 'grid', gap: 0.5 }}>
-      <TextField
-        size="small"
+    <Box sx={{ display: 'grid', gap: 1 }}>
+      <InputBase
         multiline
-        label="Description"
-        placeholder="who they are..."
+        fullWidth
+        placeholder="Who they are..."
         value={draft ?? profile.description}
         onFocus={() => setDraft((current) => current ?? profile.description)}
         onChange={(event) => setDraft(event.target.value)}
@@ -37,10 +42,11 @@ export default function ProfileDescription({ profile }: { profile: CharacterProf
           event.preventDefault()
           ;(event.target as HTMLElement).blur()
         }}
-        slotProps={{ htmlInput: { maxLength: 500 }, inputLabel: { shrink: true } }}
+        inputProps={{ maxLength: 500, 'aria-label': `Description of ${profile.name}` }}
+        sx={{ p: 0, '& textarea': { textAlign: align } }}
       />
       {update.error ? (
-        <Typography variant="body2" role="alert">
+        <Typography variant="body2" color="error" role="alert">
           {errorMessage(update.error)}
         </Typography>
       ) : null}

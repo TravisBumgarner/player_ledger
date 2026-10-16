@@ -1,21 +1,22 @@
 import type {
-  CharacterDevelopment,
   CreateGoal,
+  CreateModifier,
   CreateSessionNote,
   Goal,
+  Modifier,
   NoteKind,
-  RichDoc,
   SessionNote,
   UpdateGoal,
+  UpdateModifier,
   UpdateSessionNote,
 } from '@awesomeness-mgmt/shared'
-import { trimRichDoc } from '@awesomeness-mgmt/shared'
 import { and, asc, desc, eq } from 'drizzle-orm'
 import { db } from '../index.js'
 import {
-  characterDevelopment,
   type GoalRow,
   goals,
+  type ModifierRow,
+  modifiers,
   type SessionNoteRow,
   sessionNotes,
 } from '../schema.js'
@@ -26,6 +27,15 @@ export function toGoal(row: GoalRow): Goal {
     characterId: row.characterId,
     text: row.text,
     done: row.done,
+    createdAt: row.createdAt.toISOString(),
+  }
+}
+
+export function toModifier(row: ModifierRow): Modifier {
+  return {
+    id: row.id,
+    characterId: row.characterId,
+    text: row.text,
     createdAt: row.createdAt.toISOString(),
   }
 }
@@ -43,6 +53,9 @@ export function toSessionNote(row: SessionNoteRow): SessionNote {
 
 const ownedGoal = (characterId: string, goalId: string) =>
   and(eq(goals.characterId, characterId), eq(goals.id, goalId))
+
+const ownedModifier = (characterId: string, modifierId: string) =>
+  and(eq(modifiers.characterId, characterId), eq(modifiers.id, modifierId))
 
 const ownedNote = (characterId: string, kind: NoteKind, noteId: string) =>
   and(
@@ -82,6 +95,43 @@ export async function deleteGoal(characterId: string, goalId: string): Promise<b
     .delete(goals)
     .where(ownedGoal(characterId, goalId))
     .returning({ id: goals.id })
+  return rows.length > 0
+}
+
+export async function listModifiers(characterId: string): Promise<ModifierRow[]> {
+  return db
+    .select()
+    .from(modifiers)
+    .where(eq(modifiers.characterId, characterId))
+    .orderBy(asc(modifiers.createdAt))
+}
+
+export async function createModifier(
+  characterId: string,
+  input: CreateModifier,
+): Promise<ModifierRow> {
+  const [row] = await db.insert(modifiers).values({ characterId, text: input.text }).returning()
+  return row
+}
+
+export async function updateModifier(
+  characterId: string,
+  modifierId: string,
+  input: UpdateModifier,
+): Promise<ModifierRow | undefined> {
+  const [row] = await db
+    .update(modifiers)
+    .set({ text: input.text })
+    .where(ownedModifier(characterId, modifierId))
+    .returning()
+  return row
+}
+
+export async function deleteModifier(characterId: string, modifierId: string): Promise<boolean> {
+  const rows = await db
+    .delete(modifiers)
+    .where(ownedModifier(characterId, modifierId))
+    .returning({ id: modifiers.id })
   return rows.length > 0
 }
 
@@ -132,27 +182,4 @@ export async function deleteSessionNote(
     .where(ownedNote(characterId, kind, noteId))
     .returning({ id: sessionNotes.id })
   return rows.length > 0
-}
-
-export async function getCharacterDevelopment(characterId: string): Promise<CharacterDevelopment> {
-  const [row] = await db
-    .select()
-    .from(characterDevelopment)
-    .where(eq(characterDevelopment.characterId, characterId))
-  return row
-    ? { body: row.body, updatedAt: row.updatedAt.toISOString() }
-    : { body: { type: 'doc' }, updatedAt: null }
-}
-
-export async function saveCharacterDevelopment(
-  characterId: string,
-  body: RichDoc,
-): Promise<CharacterDevelopment> {
-  const values = { body: trimRichDoc(body), updatedAt: new Date() }
-  const [row] = await db
-    .insert(characterDevelopment)
-    .values({ characterId, ...values })
-    .onConflictDoUpdate({ target: characterDevelopment.characterId, set: values })
-    .returning()
-  return { body: row.body, updatedAt: row.updatedAt.toISOString() }
 }
