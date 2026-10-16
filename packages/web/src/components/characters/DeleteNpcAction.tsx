@@ -1,6 +1,6 @@
-import type { CharacterProfile } from '@awesomeness-mgmt/shared'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import type { CharacterProfile } from '@player-ledger/shared'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
 import { useDeleteProfile } from '@/hooks/mutations/useProfileMutations'
 import { errorMessage } from '@/lib/errorMessages'

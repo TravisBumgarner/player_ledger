@@ -1,4 +1,4 @@
-import type { InventoryItem, ItemNote, ResetOn } from '@awesomeness-mgmt/shared'
+import type { InventoryItem, ItemNote, ResetOn } from '@player-ledger/shared'
 
 const RESET_WORD: Record<ResetOn, string> = {
   none: 'never',

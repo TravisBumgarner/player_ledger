@@ -9,7 +9,7 @@ import type {
   UpdateGoal,
   UpdateModifier,
   UpdateSessionNote,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { and, asc, desc, eq } from 'drizzle-orm'
 import { db } from '../index.js'
 import {

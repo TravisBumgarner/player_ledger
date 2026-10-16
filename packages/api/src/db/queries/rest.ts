@@ -1,4 +1,4 @@
-import type { RestKind, RestState } from '@awesomeness-mgmt/shared'
+import type { RestKind, RestState } from '@player-ledger/shared'
 import { and, eq, inArray, sql } from 'drizzle-orm'
 import { db } from '../index.js'
 import { inventoryItems, type RestStateRow, restStates, spells } from '../schema.js'

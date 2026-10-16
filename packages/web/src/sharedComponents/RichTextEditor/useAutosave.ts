@@ -1,4 +1,4 @@
-import { type RichDoc, trimRichDoc } from '@awesomeness-mgmt/shared'
+import { type RichDoc, trimRichDoc } from '@player-ledger/shared'
 import { useEffect, useRef, useState } from 'react'
 import type { SaveState } from '@/components/ledger/SaveStatus'
 import { errorMessage } from '@/lib/errorMessages'

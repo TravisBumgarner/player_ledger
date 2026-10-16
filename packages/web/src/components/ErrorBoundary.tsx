@@ -1,4 +1,4 @@
-import { log } from '@awesomeness-mgmt/shared'
+import { log } from '@player-ledger/shared'
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import ErrorScreen from '@/components/ErrorScreen'
 import AppThemeProvider from '@/theme'

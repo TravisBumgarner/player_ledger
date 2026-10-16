@@ -5,7 +5,7 @@ import {
   type CreateNpc,
   log,
   type UpdateProfile,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import config from '@/config'
 import { apiFetch } from './client'
 

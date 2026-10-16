@@ -1,5 +1,5 @@
-import { createModifierSchema } from '@awesomeness-mgmt/shared'
 import Typography from '@mui/material/Typography'
+import { createModifierSchema } from '@player-ledger/shared'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
 import AddRow from '@/components/ledger/AddRow'
 import Badge from '@/components/ledger/Badge'

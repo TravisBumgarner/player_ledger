@@ -11,7 +11,7 @@ import {
   type RichNode,
   trimRichDoc,
   type UpdateProfile,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { and, asc, eq, like, sql } from 'drizzle-orm'
 import { db } from '../index.js'
 import {

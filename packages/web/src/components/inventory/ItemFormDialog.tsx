@@ -1,12 +1,3 @@
-import {
-  type CreateItem,
-  createItemSchema,
-  type InventoryItem,
-  ITEM_CATEGORIES,
-  ITEM_CATEGORY_LABELS,
-  type ItemType,
-  type ResetOn,
-} from '@awesomeness-mgmt/shared'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -21,6 +12,15 @@ import TextField from '@mui/material/TextField'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Typography from '@mui/material/Typography'
+import {
+  type CreateItem,
+  createItemSchema,
+  type InventoryItem,
+  ITEM_CATEGORIES,
+  ITEM_CATEGORY_LABELS,
+  type ItemType,
+  type ResetOn,
+} from '@player-ledger/shared'
 import { type FormEvent, useState } from 'react'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
 import {

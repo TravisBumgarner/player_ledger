@@ -1,5 +1,5 @@
-import type { InventoryItem } from '@awesomeness-mgmt/shared'
 import Typography from '@mui/material/Typography'
+import type { InventoryItem } from '@player-ledger/shared'
 
 /** Used gear is struck through; `<s>` keeps that meaning for screen readers too. */
 export default function ItemName({

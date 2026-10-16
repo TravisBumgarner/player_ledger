@@ -1,4 +1,4 @@
-import type { ErrorCode } from '@awesomeness-mgmt/shared'
+import type { ErrorCode } from '@player-ledger/shared'
 
 /** Thrown by query hooks so react-query sees a real error, not a falsy result. */
 export class ApiError extends Error {

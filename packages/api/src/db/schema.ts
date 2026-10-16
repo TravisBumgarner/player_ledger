@@ -9,7 +9,7 @@ import {
   RESET_ON,
   type RichDoc,
   SPELL_RESET_ON,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { sql } from 'drizzle-orm'
 import { blob, index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 

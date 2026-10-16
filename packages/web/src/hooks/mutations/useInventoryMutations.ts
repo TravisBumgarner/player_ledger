@@ -5,7 +5,7 @@ import type {
   InventoryItem,
   LogItemUse,
   UpdateItem,
-} from '@awesomeness-mgmt/shared'
+} from '@player-ledger/shared'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   addItemNote,

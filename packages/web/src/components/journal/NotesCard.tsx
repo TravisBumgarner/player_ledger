@@ -1,4 +1,4 @@
-import { createSessionNoteSchema, type NoteKind } from '@awesomeness-mgmt/shared'
+import { createSessionNoteSchema, type NoteKind } from '@player-ledger/shared'
 import { useActiveCharacter } from '@/components/identity/ActiveCharacter'
 import JournalList, { type EntryValue } from '@/components/ledger/journal/JournalList'
 import { useCreateNote, useDeleteNote, useUpdateNote } from '@/hooks/mutations/useJournalMutations'
